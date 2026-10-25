@@ -3,6 +3,10 @@
 
 Repo jungle-attack-client. El cliente no tiene reglas del juego: envía las intenciones del jugador al servidor y dibuja lo que recibe. Sigue MVC con el Observer de util, y cada paquete tiene su clase Main para pruebas unitarias.
 
+## Estructura Java
+
+El esqueleto de clases está en `src/main/java`, organizado en los paquetes `util`, `red`, `model`, `control` e `iu`. Las firmas están declaradas; los métodos pendientes lanzan `UnsupportedOperationException` hasta que se implemente su lógica. Las configuraciones que el spec no define quedan como marcadores por completar. El proyecto usa Maven y Gson; compila con `mvn compile`.
+
 ## Patrón Observer y Utilidades (util)
 
 Mismo paquete que en jungle-attack-server.
@@ -416,55 +420,45 @@ Prueba unitaria independiente para verificar que CacheSvg rasterice cada SVG una
 
 Estáticos: todas las constantes de Constantes, ClientMain.main(), getInstancia() de los Singleton y los métodos de FabricaMensajes. No hay estado estático mutable.
 
-## Diagrama UML
+## Diagrama Mermaid
 
-```
-@startuml JungleAttackClient
-
-title Jungle Attack Client - Diagrama de Clases
-
-scale max 3000 width
-skinparam packageStyle rectangle
-skinparam linetype ortho
-hide empty members
-
-package "util - Utilidades" as Util {
-    interface IObserver {
+```mermaid
+classDiagram
+    %% util - Utilidades
+    namespace Util {
+        class IObserver {
         +update(source: Object, ob: Observable): void
-    }
-
-    abstract class Observable {
+        }
+        class Observable {
         #observers: Vector
         +addObserver(ob: IObserver): void
         +removeObserver(ob: IObserver): void
         +notifyObservers(source: Object): void
+        }
+        class Constantes {
+        HOST: String$
+        PUERTO: int$
+        CHARSET: String$
+        ENERGIA_MAX_JUGADOR = 20$
+        ENERGIA_BOT = 10$
+        CANTIDAD_ESPECIES = 7$
+        LARGO_CODIGO = 4$
+        ANCHO_VENTANA: int$
+        ALTO_VENTANA: int$
+        FPS = 30$
+        ALTO_BARRA_ENERGIA: int$
+        COLOR_SELECCION: Color$
+        RUTA_SVG_ANIMALES: String$
+        RUTA_SVG_TAZA: String$
+        RUTA_SVG_BANDERA: String$
+        }
+        class MainUtil {
+        +main(args: String[]): void$
+        }
     }
-
-    class Constantes <<utility>> {
-        {static} HOST: String
-        {static} PUERTO: int
-        {static} CHARSET: String
-        {static} ENERGIA_MAX_JUGADOR = 20
-        {static} ENERGIA_BOT = 10
-        {static} CANTIDAD_ESPECIES = 7
-        {static} LARGO_CODIGO = 4
-        {static} ANCHO_VENTANA: int
-        {static} ALTO_VENTANA: int
-        {static} FPS = 30
-        {static} ALTO_BARRA_ENERGIA: int
-        {static} COLOR_SELECCION: Color
-        {static} RUTA_SVG_ANIMALES: String
-        {static} RUTA_SVG_TAZA: String
-        {static} RUTA_SVG_BANDERA: String
-    }
-
-    class MainUtil {
-        {static} +main(args: String[]): void
-    }
-}
-
-package "red - Comunicación y protocolo" as Red {
-    enum TipoMensaje {
+    %% red - Comunicación y protocolo
+    namespace Red {
+        class TipoMensaje {
         CREATE_MATCH
         JOIN_MATCH
         SELECT_ANIMAL
@@ -478,63 +472,59 @@ package "red - Comunicación y protocolo" as Red {
         GAME_STARTED
         STATE_UPDATE
         GAME_OVER
-    }
-
-    class Mensaje {
+        }
+        class Mensaje {
         -tipo: TipoMensaje
         -payload: JsonObject
         +getTipo(): TipoMensaje
         +getPayload(tipo: Class): Object
-    }
-
-    class CodificadorJson <<Singleton>> {
-        -{static} instancia: CodificadorJson
+        }
+        class CodificadorJson {
+        - instancia: CodificadorJson$
         -gson: Gson
-        {static} +getInstancia(): CodificadorJson
+        +getInstancia(): CodificadorJson$
         +codificar(mensaje: Mensaje): String
         +decodificar(linea: String): Mensaje
-    }
-
-    class FabricaMensajes <<Factory>> {
-        {static} +crear(tipo: TipoMensaje, payload: Object): Mensaje
-        {static} +error(razon: String): Mensaje
-    }
-
-    class DatosCrearPartida <<DTO>> {
+        }
+        class FabricaMensajes {
+        +crear(tipo: TipoMensaje, payload: Object): Mensaje$
+        +error(razon: String): Mensaje$
+        }
+        class DatosCrearPartida {
         +nickname: String
-    }
-    class DatosUnirse <<DTO>> {
+        }
+        class DatosUnirse {
         +nickname: String
         +codigo: String
-    }
-    class DatosElegirAnimal <<DTO>> {
+        }
+        class DatosElegirAnimal {
         +especie: Especie
-    }
-    class DatosMover <<DTO>> {
+        }
+        class DatosMover {
         +idsAnimales: Vector
         +destinoX: double
         +destinoY: double
-    }
-    class DatosAtacar <<DTO>> {
+        }
+        class DatosAtacar {
         +idsAnimales: Vector
         +idObjetivo: int
-    }
-    class DatosVerZona <<DTO>> {
+        }
+        class DatosVerZona {
         +idZona: int
-    }
-    class DatosPartidaCreada <<DTO>> {
+        }
+        class DatosPartidaCreada {
         +codigo: String
-    }
-    class DatosSeleccion <<DTO>> {
+        }
+        class DatosSeleccion {
         +disponibles: Vector
         +eleccionRival: Especie
-    }
-    class DatosInicio <<DTO>> {
+        }
+        class DatosInicio {
         +mapa: VistaMapa
         +zonaPropia: int
         +manada: Vector
-    }
-    class EstadoVisible <<DTO>> {
+        }
+        class EstadoVisible {
         +idZona: int
         +animales: Vector
         +tazas: Vector
@@ -543,15 +533,15 @@ package "red - Comunicación y protocolo" as Red {
         +danio: int
         +tazasConsumidas: int
         +botsEliminados: int
-    }
-    class ResumenPartida <<DTO>> {
+        }
+        class ResumenPartida {
         +ganador: String
         +botsEliminados: Map
         +animalesPerdidos: Map
         +tazas: Map
         +duracionSeg: long
-    }
-    class VistaAnimal <<DTO>> {
+        }
+        class VistaAnimal {
         +id: int
         +especie: Especie
         +esBot: boolean
@@ -559,13 +549,12 @@ package "red - Comunicación y protocolo" as Red {
         +x: double
         +y: double
         +energia: int
-    }
-    class VistaMapa <<DTO>> {
+        }
+        class VistaMapa {
         +zonas: Vector
         +caminos: Vector
-    }
-
-    class ConexionServidor {
+        }
+        class ConexionServidor {
         -socket: Socket
         -escritor: PrintWriter
         -lector: BufferedReader
@@ -574,46 +563,47 @@ package "red - Comunicación y protocolo" as Red {
         +conectar(host: String, puerto: int): void
         +enviar(mensaje: Mensaje): void
         +desconectar(): void
-    }
-
-    class HiloEscucha {
+        }
+        class HiloEscucha {
         -lector: BufferedReader
         -despachador: DespachadorMensajes
         +run(): void
-    }
-
-    interface IManejadorMensaje {
+        }
+        class IManejadorMensaje {
         +manejar(mensaje: Mensaje): void
-    }
-
-    class DespachadorMensajes <<Command Invoker>> {
+        }
+        class DespachadorMensajes {
         -manejadores: Map
         +registrar(tipo: TipoMensaje, manejador: IManejadorMensaje): void
         +despachar(mensaje: Mensaje): void
+        }
+        class ManejadorPartidaCreada {
+        }
+        class ManejadorUnido {
+        }
+        class ManejadorError {
+        }
+        class ManejadorSeleccion {
+        }
+        class ManejadorInicio {
+        }
+        class ManejadorEstado {
+        }
+        class ManejadorFinPartida {
+        }
+        class MainRed {
+        +main(args: String[]): void$
+        }
     }
-
-    class ManejadorPartidaCreada
-    class ManejadorUnido
-    class ManejadorError
-    class ManejadorSeleccion
-    class ManejadorInicio
-    class ManejadorEstado
-    class ManejadorFinPartida
-
-    class MainRed {
-        {static} +main(args: String[]): void
-    }
-}
-
-package "model - Modelo" as Model {
-    class Punto {
+    %% model - Modelo
+    namespace Model {
+        class Punto {
         -x: double
         -y: double
         +distancia(otro: Punto): double
         +interpolar(destino: Punto, t: double): Punto
-    }
-
-    enum Especie {
+        }
+        class Especie {
         JAGUAR
         DANTA
         PEREZOSO
@@ -621,12 +611,10 @@ package "model - Modelo" as Model {
         TUCAN
         COCODRILO
         PIZOTE
-        --
         -nombre: String
         -rutaSvg: String
-    }
-
-    class ModeloJuego {
+        }
+        class ModeloJuego {
         -nickname: String
         -codigoPartida: String
         -miEspecie: Especie
@@ -646,9 +634,8 @@ package "model - Modelo" as Model {
         +getMisAnimales(): Vector
         +getAnimalEn(p: Punto): AnimalCliente
         +setResumen(resumen: ResumenPartida): void
-    }
-
-    class AnimalCliente {
+        }
+        class AnimalCliente {
         -id: int
         -especie: Especie
         -esBot: boolean
@@ -660,102 +647,98 @@ package "model - Modelo" as Model {
         -tiempoActual: long
         +actualizarPos(p: Punto, tiempo: long): void
         +posInterpolada(ahora: long): Punto
-    }
-
-    class Seleccion {
+        }
+        class Seleccion {
         -seleccionados: Set
         +seleccionar(id: int): void
         +alternar(id: int): void
         +seleccionarEnRectangulo(animales: Vector, area: Rectangle): void
         +limpiar(): void
         +estaSeleccionado(id: int): boolean
+        }
+        class MainModel {
+        +main(args: String[]): void$
+        }
     }
-
-    class MainModel {
-        {static} +main(args: String[]): void
-    }
-}
-
-package "control - Controladores" as Control {
-    class ControladorLobby {
+    %% control - Controladores
+    namespace Control {
+        class ControladorLobby {
         -conexion: ConexionServidor
         -modelo: ModeloJuego
         +crearPartida(nickname: String): void
         +unirse(nickname: String, codigo: String): void
         +elegirEspecie(especie: Especie): void
-    }
-
-    class ControladorJuego {
+        }
+        class ControladorJuego {
         -conexion: ConexionServidor
         -modelo: ModeloJuego
         -seleccion: Seleccion
         +moverSeleccionados(destino: Punto): void
         +atacar(idObjetivo: int): void
         +verZona(idZona: int): void
+        }
+        class MainControl {
+        +main(args: String[]): void$
+        }
     }
-
-    class MainControl {
-        {static} +main(args: String[]): void
-    }
-}
-
-package "iu - Interfaz de usuario" as IU {
-    class VentanaJuego {
+    %% iu - Interfaz de usuario
+    namespace IU {
+        class VentanaJuego {
         -tarjetas: CardLayout
         -pantallas: Map
         +mostrarPantalla(nombre: String): void
         +update(source: Object, ob: Observable): void
-    }
-
-    abstract class Pantalla {
+        }
+        class Pantalla {
         #modelo: ModeloJuego
-        {abstract} +construir(): void
-        {abstract} +refrescar(): void
+        +construir(): void
+        +refrescar(): void
         +update(source: Object, ob: Observable): void
-    }
-
-    class PantallaLobby
-    class PantallaEspera
-    class PantallaSeleccion
-    class PantallaJuego
-    class PantallaResumen
-
-    class PanelMapa {
+        }
+        class PantallaLobby {
+        }
+        class PantallaEspera {
+        }
+        class PantallaSeleccion {
+        }
+        class PantallaJuego {
+        }
+        class PantallaResumen {
+        }
+        class PanelMapa {
         -modelo: ModeloJuego
         -seleccion: Seleccion
         -dibujables: Vector
         -refresco: Timer
         +paintComponent(g: Graphics): void
         +pantallaAMundo(p: Point): Punto
-    }
-
-    interface IDibujable {
+        }
+        class IDibujable {
         +dibujar(g2: Graphics2D, ahora: long): void
-    }
-
-    abstract class Sprite {
+        }
+        class Sprite {
         #cache: CacheSvg
-        {abstract} +dibujar(g2: Graphics2D, ahora: long): void
-    }
-
-    class SpriteZona
-    class SpriteAnimal
-    class SpriteTaza
-    class SpriteBandera
-
-    class PanelMarcador {
+        +dibujar(g2: Graphics2D, ahora: long): void
+        }
+        class SpriteZona {
+        }
+        class SpriteAnimal {
+        }
+        class SpriteTaza {
+        }
+        class SpriteBandera {
+        }
+        class PanelMarcador {
         +paintComponent(g: Graphics): void
-    }
-
-    class CacheSvg <<Singleton>> {
-        -{static} instancia: CacheSvg
+        }
+        class CacheSvg {
+        - instancia: CacheSvg$
         -imagenes: Map
-        {static} +getInstancia(): CacheSvg
+        +getInstancia(): CacheSvg$
         +precargar(rutas: Vector): void
         +getImagen(ruta: String): BufferedImage
-    }
-
-    class ControladorMouse {
+        }
+        class ControladorMouse {
         -controlador: ControladorJuego
         -panel: PanelMapa
         -inicioArrastre: Point
@@ -763,120 +746,96 @@ package "iu - Interfaz de usuario" as IU {
         +mouseDragged(e: MouseEvent): void
         +mouseReleased(e: MouseEvent): void
         +mouseClicked(e: MouseEvent): void
+        }
+        class ClientMain {
+        +main(args: String[]): void$
+        }
+        class MainIU {
+        +main(args: String[]): void$
+        }
     }
-
-    class ClientMain {
-        {static} +main(args: String[]): void
-    }
-
-    class MainIU {
-        {static} +main(args: String[]): void
-    }
-}
-
-Observable <|-- ModeloJuego
-IObserver <|.. VentanaJuego
-IObserver <|.. Pantalla
-Pantalla <|-- PantallaLobby
-Pantalla <|-- PantallaEspera
-Pantalla <|-- PantallaSeleccion
-Pantalla <|-- PantallaJuego
-Pantalla <|-- PantallaResumen
-IDibujable <|.. Sprite
-Sprite <|-- SpriteZona
-Sprite <|-- SpriteAnimal
-Sprite <|-- SpriteTaza
-Sprite <|-- SpriteBandera
-Runnable <|.. HiloEscucha
-
-IManejadorMensaje <|.. ManejadorPartidaCreada
-IManejadorMensaje <|.. ManejadorUnido
-IManejadorMensaje <|.. ManejadorError
-IManejadorMensaje <|.. ManejadorSeleccion
-IManejadorMensaje <|.. ManejadorInicio
-IManejadorMensaje <|.. ManejadorEstado
-IManejadorMensaje <|.. ManejadorFinPartida
-
-Mensaje --> TipoMensaje
-Mensaje ..> CodificadorJson
-FabricaMensajes ..> Mensaje
-FabricaMensajes ..> TipoMensaje
-CodificadorJson ..> Mensaje
-Mensaje ..> DatosCrearPartida
-Mensaje ..> DatosUnirse
-Mensaje ..> DatosElegirAnimal
-Mensaje ..> DatosMover
-Mensaje ..> DatosAtacar
-Mensaje ..> DatosVerZona
-Mensaje ..> DatosPartidaCreada
-Mensaje ..> DatosSeleccion
-Mensaje ..> DatosInicio
-Mensaje ..> EstadoVisible
-Mensaje ..> ResumenPartida
-DatosElegirAnimal --> Especie
-DatosSeleccion --> Especie
-DatosInicio --> VistaMapa
-DatosInicio ..> VistaAnimal
-EstadoVisible ..> VistaAnimal
-EstadoVisible ..> Punto
-VistaAnimal --> Especie
-VistaMapa ..> Zona
-VistaMapa ..> Camino
-ConexionServidor --> DespachadorMensajes
-ConexionServidor ..> Mensaje
-ConexionServidor --> HiloEscucha : inicia
-HiloEscucha --> DespachadorMensajes
-DespachadorMensajes o-- IManejadorMensaje : manejadores
-
-ModeloJuego --> Especie
-ModeloJuego --> VistaMapa
-ModeloJuego o-- AnimalCliente : animales
-ModeloJuego --> Punto
-ModeloJuego --> ResumenPartida
-AnimalCliente --> Especie
-AnimalCliente *-- Punto : posiciones
-Seleccion ..> AnimalCliente
-
-ControladorLobby --> ConexionServidor
-ControladorLobby --> ModeloJuego
-ControladorJuego --> ConexionServidor
-ControladorJuego --> ModeloJuego
-ControladorJuego --> Seleccion
-
-VentanaJuego o-- Pantalla
-VentanaJuego --> ModeloJuego
-Pantalla --> ModeloJuego
-PantallaJuego *-- PanelMapa
-PantallaJuego *-- PanelMarcador
-PanelMapa --> ModeloJuego
-PanelMapa --> Seleccion
-PanelMapa o-- IDibujable : dibujables
-PanelMarcador --> ModeloJuego
-Sprite --> CacheSvg
-ControladorMouse --> ControladorJuego
-ControladorMouse --> PanelMapa
-MainIU ..> CacheSvg
-ManejadorPartidaCreada ..> ModeloJuego
-ManejadorUnido ..> ModeloJuego
-ManejadorError ..> ModeloJuego
-ManejadorSeleccion ..> ModeloJuego
-ManejadorInicio ..> ModeloJuego
-ManejadorEstado ..> ModeloJuego
-ManejadorFinPartida ..> ModeloJuego
-
-note right of ModeloJuego
-  MVC: copia local de lo que
-  el jugador puede ver.
-  Notifica a la interfaz cuando
-  se actualiza el estado.
-end note
-
-note right of DespachadorMensajes
-  Command: despacha cada mensaje
-  a su manejador y actualiza el
-  modelo en el hilo de Swing.
-end note
-
-@enduml
+    Observable <|-- ModeloJuego
+    IObserver <|.. VentanaJuego
+    IObserver <|.. Pantalla
+    Pantalla <|-- PantallaLobby
+    Pantalla <|-- PantallaEspera
+    Pantalla <|-- PantallaSeleccion
+    Pantalla <|-- PantallaJuego
+    Pantalla <|-- PantallaResumen
+    IDibujable <|.. Sprite
+    Sprite <|-- SpriteZona
+    Sprite <|-- SpriteAnimal
+    Sprite <|-- SpriteTaza
+    Sprite <|-- SpriteBandera
+    Runnable <|.. HiloEscucha
+    IManejadorMensaje <|.. ManejadorPartidaCreada
+    IManejadorMensaje <|.. ManejadorUnido
+    IManejadorMensaje <|.. ManejadorError
+    IManejadorMensaje <|.. ManejadorSeleccion
+    IManejadorMensaje <|.. ManejadorInicio
+    IManejadorMensaje <|.. ManejadorEstado
+    IManejadorMensaje <|.. ManejadorFinPartida
+    Mensaje --> TipoMensaje
+    Mensaje ..> CodificadorJson
+    FabricaMensajes ..> Mensaje
+    FabricaMensajes ..> TipoMensaje
+    CodificadorJson ..> Mensaje
+    Mensaje ..> DatosCrearPartida
+    Mensaje ..> DatosUnirse
+    Mensaje ..> DatosElegirAnimal
+    Mensaje ..> DatosMover
+    Mensaje ..> DatosAtacar
+    Mensaje ..> DatosVerZona
+    Mensaje ..> DatosPartidaCreada
+    Mensaje ..> DatosSeleccion
+    Mensaje ..> DatosInicio
+    Mensaje ..> EstadoVisible
+    Mensaje ..> ResumenPartida
+    DatosElegirAnimal --> Especie
+    DatosSeleccion --> Especie
+    DatosInicio --> VistaMapa
+    DatosInicio ..> VistaAnimal
+    EstadoVisible ..> VistaAnimal
+    EstadoVisible ..> Punto
+    VistaAnimal --> Especie
+    VistaMapa ..> Zona
+    VistaMapa ..> Camino
+    ConexionServidor --> DespachadorMensajes
+    ConexionServidor ..> Mensaje
+    ConexionServidor --> HiloEscucha : inicia
+    HiloEscucha --> DespachadorMensajes
+    DespachadorMensajes o-- IManejadorMensaje : manejadores
+    ModeloJuego --> Especie
+    ModeloJuego --> VistaMapa
+    ModeloJuego o-- AnimalCliente : animales
+    ModeloJuego --> Punto
+    ModeloJuego --> ResumenPartida
+    AnimalCliente --> Especie
+    AnimalCliente *-- Punto : posiciones
+    Seleccion ..> AnimalCliente
+    ControladorLobby --> ConexionServidor
+    ControladorLobby --> ModeloJuego
+    ControladorJuego --> ConexionServidor
+    ControladorJuego --> ModeloJuego
+    ControladorJuego --> Seleccion
+    VentanaJuego o-- Pantalla
+    VentanaJuego --> ModeloJuego
+    Pantalla --> ModeloJuego
+    PantallaJuego *-- PanelMapa
+    PantallaJuego *-- PanelMarcador
+    PanelMapa --> ModeloJuego
+    PanelMapa --> Seleccion
+    PanelMapa o-- IDibujable : dibujables
+    PanelMarcador --> ModeloJuego
+    Sprite --> CacheSvg
+    ControladorMouse --> ControladorJuego
+    ControladorMouse --> PanelMapa
+    MainIU ..> CacheSvg
+    ManejadorPartidaCreada ..> ModeloJuego
+    ManejadorUnido ..> ModeloJuego
+    ManejadorError ..> ModeloJuego
+    ManejadorSeleccion ..> ModeloJuego
+    ManejadorInicio ..> ModeloJuego
+    ManejadorEstado ..> ModeloJuego
+    ManejadorFinPartida ..> ModeloJuego
 ```
-![Diagrama UML](Diagrama.png)
