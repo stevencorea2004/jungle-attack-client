@@ -1,29 +1,51 @@
 package model;
 
 import java.awt.Rectangle;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
 public class Seleccion {
-    private Set<Integer> seleccionados;
+    private final Set<Integer> seleccionados = new HashSet<>();
 
     public void seleccionar(int id) {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        seleccionados.add(id);
     }
 
     public void alternar(int id) {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        if (seleccionados.contains(id)) {
+            seleccionados.remove(id);
+        } else {
+            seleccionados.add(id);
+        }
     }
 
     public void seleccionarEnRectangulo(Vector<AnimalCliente> animales, Rectangle area) {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        if (animales == null || area == null) {
+            return;
+        }
+        seleccionados.clear();
+        for (AnimalCliente animal : animales) {
+            if (animal == null || animal.getPosActual() == null) {
+                continue;
+            }
+            int x = (int) Math.round(animal.getPosActual().getX());
+            int y = (int) Math.round(animal.getPosActual().getY());
+            if (area.contains(x, y)) {
+                seleccionados.add(animal.getId());
+            }
+        }
     }
 
     public void limpiar() {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        seleccionados.clear();
     }
 
     public boolean estaSeleccionado(int id) {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        return seleccionados.contains(id);
+    }
+
+    public Set<Integer> getSeleccionados() {
+        return new HashSet<>(seleccionados);
     }
 }

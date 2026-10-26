@@ -1,9 +1,11 @@
 package model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import red.EstadoVisible;
 import red.ResumenPartida;
+import red.VistaAnimal;
 import red.VistaMapa;
 import util.Observable;
 
@@ -15,8 +17,8 @@ public class ModeloJuego extends Observable {
     private VistaMapa mapa;
     private int zonaActual;
     private Vector<Integer> zonasVisibles;
-    private Map<Integer, AnimalCliente> animales;
-    private Vector<Object> tazas;
+    private Map<Integer, AnimalCliente> animales = new HashMap<>();
+    private Vector<Object> tazas = new Vector<>();
     private Punto bandera;
     private int danio;
     private int tazasConsumidas;
@@ -25,18 +27,89 @@ public class ModeloJuego extends Observable {
     private ResumenPartida resumen;
 
     public void aplicarEstado(EstadoVisible estado, long recibido) {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        if (estado == null) {
+            return;
+        }
+        this.zonaActual = estado.idZona;
+        this.danio = estado.danio;
+        this.tazasConsumidas = estado.tazasConsumidas;
+        this.botsEliminados = estado.botsEliminados;
+        this.bandera = estado.bandera == null ? new Punto() : estado.bandera;
+        this.tazas = estado.tazas == null ? new Vector<>() : new Vector<>(estado.tazas);
+
+        if (estado.animales != null) {
+            for (VistaAnimal vista : estado.animales) {
+                if (vista == null) {
+                    continue;
+                }
+                AnimalCliente animal = animales.getOrDefault(vista.id, new AnimalCliente());
+                animal.setId(vista.id);
+                animal.setEspecie(vista.especie);
+                animal.setEsBot(vista.esBot);
+                animal.setEsMio(vista.esMio);
+                animal.setEnergia(vista.energia);
+                animal.actualizarPos(new Punto(vista.x, vista.y), recibido);
+                animales.put(vista.id, animal);
+            }
+        }
+
+        notifyObservers(this);
     }
 
     public Vector<AnimalCliente> getMisAnimales() {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        Vector<AnimalCliente> resultado = new Vector<>();
+        for (AnimalCliente animal : animales.values()) {
+            if (animal != null && animal.isEsMio()) {
+                resultado.add(animal);
+            }
+        }
+        return resultado;
     }
 
     public AnimalCliente getAnimalEn(Punto p) {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        if (p == null) {
+            return null;
+        }
+        for (AnimalCliente animal : animales.values()) {
+            if (animal != null && animal.getPosActual() != null && animal.getPosActual().distancia(p) < 1.0) {
+                return animal;
+            }
+        }
+        return null;
     }
 
     public void setResumen(ResumenPartida resumen) {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        this.resumen = resumen;
+        notifyObservers(this);
     }
+
+    public String getNickname() { return nickname; }
+    public void setNickname(String nickname) { this.nickname = nickname; }
+    public String getCodigoPartida() { return codigoPartida; }
+    public void setCodigoPartida(String codigoPartida) { this.codigoPartida = codigoPartida; }
+    public Especie getMiEspecie() { return miEspecie; }
+    public void setMiEspecie(Especie miEspecie) { this.miEspecie = miEspecie; }
+    public Vector<Especie> getEspeciesDisponibles() { return especiesDisponibles; }
+    public void setEspeciesDisponibles(Vector<Especie> especiesDisponibles) { this.especiesDisponibles = especiesDisponibles; }
+    public VistaMapa getMapa() { return mapa; }
+    public void setMapa(VistaMapa mapa) { this.mapa = mapa; }
+    public int getZonaActual() { return zonaActual; }
+    public void setZonaActual(int zonaActual) { this.zonaActual = zonaActual; }
+    public Vector<Integer> getZonasVisibles() { return zonasVisibles; }
+    public void setZonasVisibles(Vector<Integer> zonasVisibles) { this.zonasVisibles = zonasVisibles; }
+    public Map<Integer, AnimalCliente> getAnimales() { return animales; }
+    public void setAnimales(Map<Integer, AnimalCliente> animales) { this.animales = animales; }
+    public Vector<Object> getTazas() { return tazas; }
+    public void setTazas(Vector<Object> tazas) { this.tazas = tazas; }
+    public Punto getBandera() { return bandera; }
+    public void setBandera(Punto bandera) { this.bandera = bandera; }
+    public int getDanio() { return danio; }
+    public void setDanio(int danio) { this.danio = danio; }
+    public int getTazasConsumidas() { return tazasConsumidas; }
+    public void setTazasConsumidas(int tazasConsumidas) { this.tazasConsumidas = tazasConsumidas; }
+    public int getBotsEliminados() { return botsEliminados; }
+    public void setBotsEliminados(int botsEliminados) { this.botsEliminados = botsEliminados; }
+    public String getUltimoError() { return ultimoError; }
+    public void setUltimoError(String ultimoError) { this.ultimoError = ultimoError; }
+    public ResumenPartida getResumen() { return resumen; }
 }
