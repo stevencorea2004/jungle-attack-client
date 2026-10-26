@@ -115,9 +115,15 @@ Atributos:
 
 Métodos:
 
-- conectar(String host, int puerto): void
-- enviar(Mensaje mensaje): void
-- desconectar(): void — Cierra el socket en finally.
+- conectar(String host, int puerto): void — Abre el socket con un límite de espera de cinco segundos e inicia HiloEscucha.
+- enviar(Mensaje mensaje): void — Envía un mensaje JSON terminado en salto de línea; reporta si no hay conexión o si falla la escritura.
+- desconectar(): void — Cierra el socket y detiene la lectura; es seguro llamarlo más de una vez.
+
+Constructores:
+
+- ConexionServidor(): crea un despachador vacío para registrar manejadores manualmente.
+- ConexionServidor(ModeloJuego modelo): crea el despachador e instala los manejadores de todas las respuestas del servidor.
+- ConexionServidor(DespachadorMensajes despachador): permite inyectar un despachador configurado.
 
 ### HiloEscucha (Implementa Runnable)
 
@@ -130,7 +136,7 @@ Atributos:
 
 Métodos:
 
-- run(): void — Lee una línea por mensaje; nunca toca componentes Swing directamente.
+- run(): void — Lee una línea por mensaje; los JSON inválidos se notifican como ERROR y no interrumpen la lectura.
 
 ### DespachadorMensajes — Command: invocador
 
@@ -141,7 +147,8 @@ Atributos:
 Métodos:
 
 - registrar(TipoMensaje tipo, IManejadorMensaje manejador): void
-- despachar(Mensaje mensaje): void — Pasa al hilo de Swing con SwingUtilities.invokeLater.
+- despachar(Mensaje mensaje): void — Ejecuta los manejadores en el hilo de Swing con SwingUtilities.invokeLater; los tipos sin manejador se informan mediante el manejador ERROR.
+- registrarManejadores(ModeloJuego modelo): void — Registra los manejadores de las respuestas y sus actualizaciones del modelo.
 
 ### IManejadorMensaje (Interfaz) — Patrón Command
 
@@ -155,7 +162,7 @@ ManejadorPartidaCreada, ManejadorUnido, ManejadorError, ManejadorSeleccion, Mane
 
 ### MainRed
 
-Prueba unitaria independiente para verificar la ida y vuelta a JSON de cada tipo de mensaje y que cada mensaje llegue a su manejador.
+Comprobación rápida de ida y vuelta JSON para todos los valores de TipoMensaje. Las pruebas de integración de socket, despacho Swing y actualización del modelo están en `src/test/java/red/RedClientTest.java`.
 
 ## 2. Model Layer (model)
 

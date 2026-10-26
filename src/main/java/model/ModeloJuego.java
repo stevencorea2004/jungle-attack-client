@@ -3,6 +3,7 @@ package model;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import red.DatosInicio;
 import red.EstadoVisible;
 import red.ResumenPartida;
 import red.VistaAnimal;
@@ -13,6 +14,7 @@ public class ModeloJuego extends Observable {
     private String nickname;
     private String codigoPartida;
     private Especie miEspecie;
+    private Especie especieRival;
     private Vector<Especie> especiesDisponibles;
     private VistaMapa mapa;
     private int zonaActual;
@@ -26,6 +28,37 @@ public class ModeloJuego extends Observable {
     private String ultimoError;
     private ResumenPartida resumen;
 
+    public void aplicarInicio(DatosInicio inicio) {
+        if (inicio == null) {
+            return;
+        }
+        mapa = inicio.mapa;
+        zonaActual = inicio.zonaPropia;
+        zonasVisibles = new Vector<>();
+        zonasVisibles.add(inicio.zonaPropia);
+        animales.clear();
+        miEspecie = null;
+        resumen = null;
+        danio = 0;
+        tazasConsumidas = 0;
+        botsEliminados = 0;
+        tazas = new Vector<>();
+        bandera = new Punto();
+
+        if (inicio.manada != null) {
+            for (VistaAnimal vista : inicio.manada) {
+                if (vista == null) {
+                    continue;
+                }
+                agregarVistaAnimal(vista, System.currentTimeMillis());
+                if (vista.esMio && miEspecie == null) {
+                    miEspecie = vista.especie;
+                }
+            }
+        }
+        notifyObservers(this);
+    }
+
     public void aplicarEstado(EstadoVisible estado, long recibido) {
         if (estado == null) {
             return;
@@ -36,24 +69,34 @@ public class ModeloJuego extends Observable {
         this.botsEliminados = estado.botsEliminados;
         this.bandera = estado.bandera == null ? new Punto() : estado.bandera;
         this.tazas = estado.tazas == null ? new Vector<>() : new Vector<>(estado.tazas);
+        if (zonasVisibles == null) {
+            zonasVisibles = new Vector<>();
+        }
+        if (!zonasVisibles.contains(estado.idZona)) {
+            zonasVisibles.add(estado.idZona);
+        }
 
         if (estado.animales != null) {
             for (VistaAnimal vista : estado.animales) {
                 if (vista == null) {
                     continue;
                 }
-                AnimalCliente animal = animales.getOrDefault(vista.id, new AnimalCliente());
-                animal.setId(vista.id);
-                animal.setEspecie(vista.especie);
-                animal.setEsBot(vista.esBot);
-                animal.setEsMio(vista.esMio);
-                animal.setEnergia(vista.energia);
-                animal.actualizarPos(new Punto(vista.x, vista.y), recibido);
-                animales.put(vista.id, animal);
+                agregarVistaAnimal(vista, recibido);
             }
         }
 
         notifyObservers(this);
+    }
+
+    private void agregarVistaAnimal(VistaAnimal vista, long recibido) {
+        AnimalCliente animal = animales.getOrDefault(vista.id, new AnimalCliente());
+        animal.setId(vista.id);
+        animal.setEspecie(vista.especie);
+        animal.setEsBot(vista.esBot);
+        animal.setEsMio(vista.esMio);
+        animal.setEnergia(vista.energia);
+        animal.actualizarPos(new Punto(vista.x, vista.y), recibido);
+        animales.put(vista.id, animal);
     }
 
     public Vector<AnimalCliente> getMisAnimales() {
@@ -89,6 +132,8 @@ public class ModeloJuego extends Observable {
     public void setCodigoPartida(String codigoPartida) { this.codigoPartida = codigoPartida; }
     public Especie getMiEspecie() { return miEspecie; }
     public void setMiEspecie(Especie miEspecie) { this.miEspecie = miEspecie; }
+    public Especie getEspecieRival() { return especieRival; }
+    public void setEspecieRival(Especie especieRival) { this.especieRival = especieRival; }
     public Vector<Especie> getEspeciesDisponibles() { return especiesDisponibles; }
     public void setEspeciesDisponibles(Vector<Especie> especiesDisponibles) { this.especiesDisponibles = especiesDisponibles; }
     public VistaMapa getMapa() { return mapa; }
@@ -110,6 +155,7 @@ public class ModeloJuego extends Observable {
     public int getBotsEliminados() { return botsEliminados; }
     public void setBotsEliminados(int botsEliminados) { this.botsEliminados = botsEliminados; }
     public String getUltimoError() { return ultimoError; }
-    public void setUltimoError(String ultimoError) { this.ultimoError = ultimoError; }
+    public void setUltimoError(String ultimoError) { this.ultimoError = ultimoError; notifyObservers(this); }
     public ResumenPartida getResumen() { return resumen; }
+    public void notificarCambio() { notifyObservers(this); }
 }
