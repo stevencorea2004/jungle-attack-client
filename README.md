@@ -5,7 +5,7 @@ Repo jungle-attack-client. El cliente no tiene reglas del juego: envía las inte
 
 ## Estructura Java
 
-El proyecto está organizado en los paquetes `util`, `red`, `model`, `control` e `iu`. Las configuraciones que el spec no define quedan como marcadores por completar. Usa Maven y Gson; se compila con `mvn compile` y se ejecutan las pruebas JUnit 5 con `mvn test`. Las pruebas de modelo y control están en `src/test/java`.
+Requiere JDK 25 (LTS) y Maven 3.9 o posterior. El proyecto está organizado en los paquetes `util`, `red`, `model`, `control` e `iu`. Las configuraciones que el spec no define quedan como marcadores por completar. Usa Maven y Gson; se compila con `mvn compile` y se ejecutan las pruebas JUnit 5 con `mvn test`. Las pruebas de modelo y control están en `src/test/java`.
 
 ## Patrón Observer y Utilidades (util)
 
