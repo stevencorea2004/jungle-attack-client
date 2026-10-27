@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 red\RedClientTest.class
+=======
+iu\UiRenderingTest.class
+model\ClientModelTest.class
+control\ControladoresTest.class
+control\ControladoresTest$FakeConexion.class
+>>>>>>> 08a9ee895a38774417a0090a35ca1bf4d63eebee
