@@ -1,6 +1,5 @@
 package control;
 
-import java.util.Vector;
 import model.Especie;
 import model.ModeloJuego;
 import model.Punto;
@@ -8,10 +7,7 @@ import model.Seleccion;
 import red.ConexionServidor;
 import red.DatosAtacar;
 import red.DatosCrearPartida;
-import red.DatosElegirAnimal;
 import red.DatosMover;
-import red.DatosUnirse;
-import red.DatosVerZona;
 import red.FabricaMensajes;
 import red.Mensaje;
 import red.TipoMensaje;
