@@ -1,7 +1,6 @@
 package control;
 
-import java.util.Vector;
-import model.ModeloJuego;
+import java.util.ArrayList;
 import model.Punto;
 import model.Seleccion;
 import red.ConexionServidor;
@@ -12,13 +11,11 @@ import red.FabricaMensajes;
 import red.TipoMensaje;
 
 public class ControladorJuego {
-    private ConexionServidor conexion;
-    private ModeloJuego modelo;
-    private Seleccion seleccion;
+    private final ConexionServidor conexion;
+    private final Seleccion seleccion;
 
-    public ControladorJuego(ConexionServidor conexion, ModeloJuego modelo, Seleccion seleccion) {
+    public ControladorJuego(ConexionServidor conexion, Seleccion seleccion) {
         this.conexion = conexion;
-        this.modelo = modelo;
         this.seleccion = seleccion;
     }
 
@@ -27,7 +24,7 @@ public class ControladorJuego {
             return;
         }
         DatosMover payload = new DatosMover();
-        payload.idsAnimales = new Vector<>(seleccion.getSeleccionados());
+        payload.idsAnimales = new ArrayList<>(seleccion.getSeleccionados());
         payload.destinoX = destino.getX();
         payload.destinoY = destino.getY();
         conexion.enviar(FabricaMensajes.crear(TipoMensaje.MOVE_ANIMALS, payload));
@@ -38,7 +35,7 @@ public class ControladorJuego {
             return;
         }
         DatosAtacar payload = new DatosAtacar();
-        payload.idsAnimales = new Vector<>(seleccion.getSeleccionados());
+        payload.idsAnimales = new ArrayList<>(seleccion.getSeleccionados());
         payload.idObjetivo = idObjetivo;
         conexion.enviar(FabricaMensajes.crear(TipoMensaje.ATTACK, payload));
     }

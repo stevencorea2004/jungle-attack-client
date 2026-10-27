@@ -40,7 +40,30 @@ class ClientModelTest {
 
         modelo.aplicarEstado(estadoConAnimal(6, 30, 40, true), 2_000L);
         assertEquals(animal, modelo.getAnimales().get(6));
-        assertEquals(20.0, animal.posInterpolada(1_500L).getX(), 0.0001);
+        assertEquals(18.0, animal.posInterpolada(1_500L).getX(), 0.0001);
+    }
+
+    @Test
+    void interpolatesBetweenBufferedSnapshotsToKeepMovementSmooth() {
+        AnimalCliente animal = new AnimalCliente();
+        animal.actualizarPos(new Punto(0, 0), 1_000L);
+        animal.actualizarPos(new Punto(10, 0), 1_050L);
+        animal.actualizarPos(new Punto(20, 0), 1_100L);
+
+        assertEquals(6.6, animal.posInterpolada(1_133L).getX(), 0.0001);
+        assertEquals(13.2, animal.posInterpolada(1_166L).getX(), 0.0001);
+    }
+
+    @Test
+    void holdsFirstPositionAndIgnoresOutOfOrderSnapshots() {
+        AnimalCliente animal = new AnimalCliente();
+        animal.actualizarPos(new Punto(50, 25), 1_000L);
+
+        assertEquals(50.0, animal.posInterpolada(5_000L).getX(), 0.0001);
+        animal.actualizarPos(new Punto(70, 25), 1_100L);
+        animal.actualizarPos(new Punto(999, 25), 1_050L);
+
+        assertEquals(70.0, animal.posInterpolada(1_200L).getX(), 0.0001);
     }
 
     @Test
@@ -66,7 +89,7 @@ class ClientModelTest {
         Seleccion seleccion = new Seleccion();
 
         seleccion.seleccionarEnRectangulo(new Vector<>(java.util.List.of(animal)),
-                new java.awt.Rectangle(29, 39, 2, 2), 1_500L);
+                new java.awt.Rectangle(27, 37, 2, 2), 1_500L);
 
         assertTrue(seleccion.estaSeleccionado(13));
     }

@@ -1,9 +1,9 @@
 package model;
 
 import java.awt.Rectangle;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
 
 public class Seleccion {
     private final Set<Integer> seleccionados = new HashSet<>();
@@ -20,11 +20,11 @@ public class Seleccion {
         }
     }
 
-    public void seleccionarEnRectangulo(Vector<AnimalCliente> animales, Rectangle area) {
+    public void seleccionarEnRectangulo(Collection<AnimalCliente> animales, Rectangle area) {
         seleccionarEnRectangulo(animales, area, System.currentTimeMillis());
     }
 
-    void seleccionarEnRectangulo(Vector<AnimalCliente> animales, Rectangle area, long ahora) {
+    void seleccionarEnRectangulo(Collection<AnimalCliente> animales, Rectangle area, long ahora) {
         if (animales == null || area == null) {
             return;
         }

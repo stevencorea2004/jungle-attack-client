@@ -5,7 +5,7 @@ Repo jungle-attack-client. El cliente se conecta al servidor en `localhost:5000`
 
 ## Estructura Java
 
-Requiere JDK 25 (LTS) y Maven 3.9 o posterior. El proyecto está organizado en los paquetes `util`, `red`, `model`, `control` e `iu`. Inicia primero el servidor; el cliente informa si no puede conectarse. Usa Maven y Gson; se compila con `mvn compile` y se ejecutan las pruebas JUnit 5 con `mvn test`.
+Requiere JDK 25 (LTS) y Maven 3.9 o posterior. El proyecto está organizado en los paquetes `util`, `red`, `model`, `control` e `iu`. Inicia primero el servidor; el cliente informa si no puede conectarse. Usa Maven y Gson; se compila con `mvn compile` y se ejecutan las pruebas JUnit 5 con `mvn test`, incluidas pruebas de ida y vuelta JSON para payloads anidados del protocolo.
 
 ## Patrón Observer y Utilidades (util)
 
@@ -37,11 +37,11 @@ Variables principales:
 
 - Red: HOST, PUERTO, CHARSET ("UTF-8").
 - Juego (para mostrar en pantalla): ENERGIA\_MAX\_JUGADOR (20), ENERGIA\_BOT (10), CANTIDAD\_ESPECIES (7), LARGO\_CODIGO (4).
-- Aspectos Gráficos: ANCHO\_VENTANA, ALTO\_VENTANA, FPS (30), ALTO\_BARRA\_ENERGIA, COLOR\_SELECCION, RUTA\_SVG\_ANIMALES, RUTA\_SVG\_TAZA, RUTA\_SVG\_BANDERA.
+- Aspectos Gráficos: ANCHO\_VENTANA, ALTO\_VENTANA, FPS (30), RETRASO\_INTERPOLACION\_MS (100), ALTO\_BARRA\_ENERGIA, COLOR\_SELECCION, RUTA\_SVG\_ANIMALES, RUTA\_SVG\_TAZA, RUTA\_SVG\_BANDERA.
 
 ### MainUtil
 
-Prueba unitaria independiente para verificar que Observable registra, quita y notifica observadores.
+`UtilTest` verifica que `MainUtil` sea invocable, valida constantes representativas y comprueba que `Observable` registra, notifica una sola vez y deja de notificar al quitar un observador.
 
 ## 1. Network Layer (red)
 
@@ -92,8 +92,8 @@ Métodos:
 - DatosCrearPartida: nickname: String
 - DatosUnirse: nickname: String, codigo: String
 - DatosElegirAnimal: especie: Especie
-- DatosMover: idsAnimales: Vector, destinoX: double, destinoY: double
-- DatosAtacar: idsAnimales: Vector, idObjetivo: int
+- DatosMover: idsAnimales: List<Integer>, destinoX: double, destinoY: double
+- DatosAtacar: idsAnimales: List<Integer>, idObjetivo: int
 - DatosVerZona: idZona: int
 - DatosPartidaCreada: codigo: String
 - DatosSeleccion: disponibles: Vector, eleccionRival: Especie
@@ -229,15 +229,13 @@ Atributos:
 - esBot: boolean
 - esMio: boolean
 - energia: int
-- posAnterior: Punto
 - posActual: Punto
-- tiempoAnterior: long
-- tiempoActual: long
+- historialPosiciones: List<MuestraPosicion>
 
 Métodos:
 
-- actualizarPos(Punto p, long tiempo): void
-- posInterpolada(long ahora): Punto — Suaviza el movimiento entre los dos últimos snapshots.
+- actualizarPos(Punto p, long tiempo): void — Conserva las muestras necesarias para el búfer y descarta snapshots antiguos.
+- posInterpolada(long ahora): Punto — Interpola entre muestras con 100 ms de búfer para suavizar el movimiento.
 
 ### Seleccion
 
@@ -264,7 +262,6 @@ Prueba unitaria independiente para verificar que aplicarEstado notifique a los o
 Atributos:
 
 - conexion: ConexionServidor
-- modelo: ModeloJuego
 
 Métodos:
 
@@ -336,7 +333,6 @@ Atributos:
 
 - modelo: ModeloJuego
 - seleccion: Seleccion
-- dibujables: Vector
 - refresco: Timer — Aproximadamente 30 FPS.
 
 Métodos:
@@ -455,6 +451,7 @@ classDiagram
         ANCHO_VENTANA: int$
         ALTO_VENTANA: int$
         FPS = 30$
+        RETRASO_INTERPOLACION_MS = 100L$
         ALTO_BARRA_ENERGIA: int$
         COLOR_SELECCION: Color$
         RUTA_SVG_ANIMALES: String$
@@ -510,12 +507,12 @@ classDiagram
         +especie: Especie
         }
         class DatosMover {
-        +idsAnimales: Vector
+        +idsAnimales: List<Integer>
         +destinoX: double
         +destinoY: double
         }
         class DatosAtacar {
-        +idsAnimales: Vector
+        +idsAnimales: List<Integer>
         +idObjetivo: int
         }
         class DatosVerZona {
@@ -666,10 +663,8 @@ classDiagram
         -esBot: boolean
         -esMio: boolean
         -energia: int
-        -posAnterior: Punto
         -posActual: Punto
-        -tiempoAnterior: long
-        -tiempoActual: long
+        -historialPosiciones: List<MuestraPosicion>
         +actualizarPos(p: Punto, tiempo: long): void
         +posInterpolada(ahora: long): Punto
         }
@@ -689,7 +684,6 @@ classDiagram
     namespace Control {
         class ControladorLobby {
         -conexion: ConexionServidor
-        -modelo: ModeloJuego
         +crearPartida(nickname: String): void
         +unirse(nickname: String, codigo: String): void
         +elegirEspecie(especie: Especie): void
@@ -733,7 +727,6 @@ classDiagram
         class PanelMapa {
         -modelo: ModeloJuego
         -seleccion: Seleccion
-        -dibujables: Vector
         -refresco: Timer
         +paintComponent(g: Graphics): void
         +pantallaAMundo(p: Point): Punto
@@ -839,7 +832,6 @@ classDiagram
     AnimalCliente *-- Punto : posiciones
     Seleccion ..> AnimalCliente
     ControladorLobby --> ConexionServidor
-    ControladorLobby --> ModeloJuego
     ControladorJuego --> ConexionServidor
     ControladorJuego --> ModeloJuego
     ControladorJuego --> Seleccion
@@ -850,7 +842,6 @@ classDiagram
     PantallaJuego *-- PanelMarcador
     PanelMapa --> ModeloJuego
     PanelMapa --> Seleccion
-    PanelMapa o-- IDibujable : dibujables
     PanelMarcador --> ModeloJuego
     Sprite --> CacheSvg
     ControladorMouse --> ControladorJuego

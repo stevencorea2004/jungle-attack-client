@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import model.Especie;
-import model.ModeloJuego;
 import model.Punto;
 import model.Seleccion;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ class ControladoresTest {
     @Test
     void lobbySendsCreateJoinAndSpeciesSelectionMessages() {
         FakeConexion conexion = new FakeConexion();
-        ControladorLobby controlador = new ControladorLobby(conexion, new ModeloJuego());
+        ControladorLobby controlador = new ControladorLobby(conexion);
 
         controlador.crearPartida("Ana");
         assertEquals(TipoMensaje.CREATE_MATCH, conexion.ultimo.getTipo());
@@ -46,7 +45,7 @@ class ControladoresTest {
         Seleccion seleccion = new Seleccion();
         seleccion.seleccionar(2);
         seleccion.seleccionar(7);
-        ControladorJuego controlador = new ControladorJuego(conexion, new ModeloJuego(), seleccion);
+        ControladorJuego controlador = new ControladorJuego(conexion, seleccion);
 
         controlador.moverSeleccionados(new Punto(15, 25));
         assertEquals(TipoMensaje.MOVE_ANIMALS, conexion.ultimo.getTipo());

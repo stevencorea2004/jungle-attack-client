@@ -2,11 +2,12 @@ package iu;
 
 import control.ControladorJuego;
 import control.ControladorLobby;
-import javax.swing.SwingUtilities;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.io.UncheckedIOException;
+import javax.swing.SwingUtilities;
 import model.ModeloJuego;
 import model.Seleccion;
+import model.Especie;
 import red.ConexionServidor;
 import util.Constantes;
 
@@ -15,8 +16,8 @@ public final class ClientMain {
     }
 
     public static void main(String[] args) {
-        Vector<String> imagenes = new Vector<>();
-        for (model.Especie especie : model.Especie.values()) {
+        ArrayList<String> imagenes = new ArrayList<>();
+        for (Especie especie : Especie.values()) {
             imagenes.add(especie.getRutaSvg());
         }
         imagenes.add("svg/taza_cafe.svg");
@@ -37,8 +38,8 @@ public final class ClientMain {
                         "Servidor no disponible", javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            ControladorLobby lobby = new ControladorLobby(conexion, modelo);
-            ControladorJuego juego = new ControladorJuego(conexion, modelo, seleccion);
+            ControladorLobby lobby = new ControladorLobby(conexion);
+            ControladorJuego juego = new ControladorJuego(conexion, seleccion);
             VentanaJuego ventana = new VentanaJuego(modelo, lobby, juego, seleccion);
             ventana.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override

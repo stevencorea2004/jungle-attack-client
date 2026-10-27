@@ -13,6 +13,7 @@ public final class Constantes {
     public static final int ANCHO_VENTANA = 1280;
     public static final int ALTO_VENTANA = 800;
     public static final int FPS = 30;
+    public static final long RETRASO_INTERPOLACION_MS = 100L;
     public static final int ALTO_BARRA_ENERGIA = 6;
     public static final Color COLOR_SELECCION = new Color(255, 211, 92);
     public static final String RUTA_SVG_ANIMALES = "svg/";

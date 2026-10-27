@@ -1,38 +1,80 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+import util.Constantes;
+
 public class AnimalCliente {
     private int id;
     private Especie especie;
     private boolean esBot;
     private boolean esMio;
     private int energia;
-    private Punto posAnterior;
     private Punto posActual;
-    private long tiempoAnterior;
-    private long tiempoActual;
+    private final List<MuestraPosicion> historialPosiciones;
 
     public AnimalCliente() {
-        this.posAnterior = new Punto();
         this.posActual = new Punto();
+        this.historialPosiciones = new ArrayList<>();
     }
 
     public void actualizarPos(Punto p, long tiempo) {
-        this.posAnterior = this.posActual;
-        this.posActual = p == null ? new Punto() : p;
-        this.tiempoAnterior = this.tiempoActual;
-        this.tiempoActual = tiempo;
+        Punto nuevaPosicion = copiar(p == null ? new Punto() : p);
+        if (!historialPosiciones.isEmpty()
+                && tiempo < historialPosiciones.get(historialPosiciones.size() - 1).tiempo) {
+            return;
+        }
+        if (!historialPosiciones.isEmpty()
+                && tiempo == historialPosiciones.get(historialPosiciones.size() - 1).tiempo) {
+            historialPosiciones.set(historialPosiciones.size() - 1,
+                    new MuestraPosicion(nuevaPosicion, tiempo));
+        } else {
+            historialPosiciones.add(new MuestraPosicion(nuevaPosicion, tiempo));
+        }
+        posActual = nuevaPosicion;
+        long limite = tiempo - Constantes.RETRASO_INTERPOLACION_MS;
+        while (historialPosiciones.size() > 2
+                && historialPosiciones.get(1).tiempo <= limite) {
+            historialPosiciones.remove(0);
+        }
     }
 
     public Punto posInterpolada(long ahora) {
         if (posActual == null) {
             return new Punto();
         }
-        if (tiempoActual <= tiempoAnterior || ahora <= tiempoAnterior) {
-            return posActual;
+        if (historialPosiciones.isEmpty()) {
+            return copiar(posActual);
         }
-        double delta = (double) (ahora - tiempoAnterior) / (double) (tiempoActual - tiempoAnterior);
-        delta = Math.max(0.0, Math.min(1.0, delta));
-        return posAnterior.interpolar(posActual, delta);
+        long tiempoRenderizado = ahora - Constantes.RETRASO_INTERPOLACION_MS;
+        MuestraPosicion anterior = historialPosiciones.get(0);
+        if (tiempoRenderizado <= anterior.tiempo) {
+            return copiar(anterior.posicion);
+        }
+        for (int i = 1; i < historialPosiciones.size(); i++) {
+            MuestraPosicion actual = historialPosiciones.get(i);
+            if (tiempoRenderizado <= actual.tiempo) {
+                double delta = (double) (tiempoRenderizado - anterior.tiempo)
+                        / (double) (actual.tiempo - anterior.tiempo);
+                return anterior.posicion.interpolar(actual.posicion, delta);
+            }
+            anterior = actual;
+        }
+        return copiar(anterior.posicion);
+    }
+
+    private static Punto copiar(Punto punto) {
+        return new Punto(punto.getX(), punto.getY());
+    }
+
+    private static final class MuestraPosicion {
+        private final Punto posicion;
+        private final long tiempo;
+
+        private MuestraPosicion(Punto posicion, long tiempo) {
+            this.posicion = posicion;
+            this.tiempo = tiempo;
+        }
     }
 
     public int getId() { return id; }
@@ -46,5 +88,8 @@ public class AnimalCliente {
     public int getEnergia() { return energia; }
     public void setEnergia(int energia) { this.energia = energia; }
     public Punto getPosActual() { return posActual; }
-    public void setPosActual(Punto posActual) { this.posActual = posActual; }
+    public void setPosActual(Punto posActual) {
+        this.posActual = posActual == null ? new Punto() : copiar(posActual);
+        this.historialPosiciones.clear();
+    }
 }

@@ -1,14 +1,11 @@
 package control;
 
 import model.Especie;
-import model.ModeloJuego;
 import model.Punto;
 import model.Seleccion;
 import red.ConexionServidor;
 import red.DatosAtacar;
-import red.DatosCrearPartida;
 import red.DatosMover;
-import red.FabricaMensajes;
 import red.Mensaje;
 import red.TipoMensaje;
 
@@ -24,8 +21,7 @@ public final class MainControl {
 
     private static void verificarLobby() {
         FakeConexion conexion = new FakeConexion();
-        ModeloJuego modelo = new ModeloJuego();
-        ControladorLobby lobby = new ControladorLobby(conexion, modelo);
+        ControladorLobby lobby = new ControladorLobby(conexion);
 
         lobby.crearPartida("Ana");
         if (conexion.ultimo == null || conexion.ultimo.getTipo() != TipoMensaje.CREATE_MATCH) {
@@ -45,9 +41,8 @@ public final class MainControl {
 
     private static void verificarJuego() {
         FakeConexion conexion = new FakeConexion();
-        ModeloJuego modelo = new ModeloJuego();
         Seleccion seleccion = new Seleccion();
-        ControladorJuego juego = new ControladorJuego(conexion, modelo, seleccion);
+        ControladorJuego juego = new ControladorJuego(conexion, seleccion);
 
         seleccion.seleccionar(1);
         seleccion.seleccionar(2);
