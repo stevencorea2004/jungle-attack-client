@@ -1,11 +1,11 @@
 # Jungle Attack Client 
 
 
-Repo jungle-attack-client. El cliente no tiene reglas del juego: envía las intenciones del jugador al servidor y dibuja lo que recibe. Sigue MVC con el Observer de util, y cada paquete tiene su clase Main para pruebas unitarias.
+Repo jungle-attack-client. El cliente se conecta al servidor en `localhost:5000`, envía las intenciones del jugador y dibuja el mapa y estado que recibe. Sigue MVC con el Observer de util.
 
 ## Estructura Java
 
-Requiere JDK 25 (LTS) y Maven 3.9 o posterior. El proyecto está organizado en los paquetes `util`, `red`, `model`, `control` e `iu`. Las configuraciones que el spec no define quedan como marcadores por completar. Usa Maven y Gson; se compila con `mvn compile` y se ejecutan las pruebas JUnit 5 con `mvn test`. Las pruebas de modelo y control están en `src/test/java`.
+Requiere JDK 25 (LTS) y Maven 3.9 o posterior. El proyecto está organizado en los paquetes `util`, `red`, `model`, `control` e `iu`. Inicia primero el servidor; el cliente informa si no puede conectarse. Usa Maven y Gson; se compila con `mvn compile` y se ejecutan las pruebas JUnit 5 con `mvn test`.
 
 ## Patrón Observer y Utilidades (util)
 
@@ -98,10 +98,12 @@ Métodos:
 - DatosPartidaCreada: codigo: String
 - DatosSeleccion: disponibles: Vector, eleccionRival: Especie
 - DatosInicio: mapa: VistaMapa, zonaPropia: int, manada: Vector
-- EstadoVisible: idZona: int, animales: Vector, tazas: Vector, bandera: Punto, eventos: Vector, danio: int, tazasConsumidas: int, botsEliminados: int
+- EstadoVisible: idZona: int, animales: Vector, tazas: Vector, bandera: Punto, colorBandera: String, zonasVisibles: Vector, animalesVivos: int, eventos: Vector, danio: int, tazasConsumidas: int, botsEliminados: int
 - ResumenPartida: ganador: String, botsEliminados: Map, animalesPerdidos: Map, tazas: Map, duracionSeg: long
 - VistaAnimal: id: int, especie: Especie, esBot: boolean, esMio: boolean, x: double, y: double, energia: int
-- VistaMapa: zonas: Vector, caminos: Vector
+- VistaMapa: zonas: Vector<VistaZona>, caminos: Vector<VistaCamino>
+- VistaZona: id: int, x: double, y: double, ancho: double, alto: double
+- VistaCamino: zonaA: int, zonaB: int, puntos: Vector<Punto>
 
 ### ConexionServidor
 
@@ -536,6 +538,9 @@ classDiagram
         +animales: Vector
         +tazas: Vector
         +bandera: Punto
+        +colorBandera: String
+        +zonasVisibles: Vector
+        +animalesVivos: int
         +eventos: Vector
         +danio: int
         +tazasConsumidas: int
@@ -560,6 +565,18 @@ classDiagram
         class VistaMapa {
         +zonas: Vector
         +caminos: Vector
+        }
+        class VistaZona {
+        +id: int
+        +x: double
+        +y: double
+        +ancho: double
+        +alto: double
+        }
+        class VistaCamino {
+        +zonaA: int
+        +zonaB: int
+        +puntos: Vector
         }
         class ConexionServidor {
         -socket: Socket
@@ -632,6 +649,7 @@ classDiagram
         -animales: Map
         -tazas: Vector
         -bandera: Punto
+        -animalesVivos: int
         -danio: int
         -tazasConsumidas: int
         -botsEliminados: int
@@ -805,8 +823,8 @@ classDiagram
     EstadoVisible ..> VistaAnimal
     EstadoVisible ..> Punto
     VistaAnimal --> Especie
-    VistaMapa ..> Zona
-    VistaMapa ..> Camino
+    VistaMapa ..> VistaZona
+    VistaMapa ..> VistaCamino
     ConexionServidor --> DespachadorMensajes
     ConexionServidor ..> Mensaje
     ConexionServidor --> HiloEscucha : inicia

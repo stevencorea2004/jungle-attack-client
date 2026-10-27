@@ -1,6 +1,8 @@
+iu\CacheSvg$BufferedImageTranscoder.class
 iu\SpriteTaza.class
 red\ManejadorError.class
 model\ModeloJuego.class
+iu\TemaUI.class
 red\ConexionServidor.class
 red\DatosAtacar.class
 red\DespachadorMensajes.class
@@ -13,6 +15,7 @@ control\ControladorJuego.class
 red\CodificadorJson.class
 red\VistaMapa.class
 control\MainControl$FakeConexion.class
+iu\ClientMain$1.class
 red\ManejadorFinPartida.class
 iu\SpriteBandera.class
 iu\IDibujable.class
@@ -23,6 +26,7 @@ util\IObserver.class
 model\MainModel$ContadorObserver.class
 model\Seleccion.class
 model\Punto.class
+red\VistaZona.class
 red\ResumenPartida.class
 red\DatosElegirAnimal.class
 model\MainModel.class
@@ -34,6 +38,7 @@ red\ManejadorPartidaCreada.class
 red\DatosSeleccion.class
 iu\Sprite.class
 red\DatosInicio.class
+red\VistaCamino.class
 iu\PantallaSeleccion.class
 iu\PantallaEspera.class
 iu\PantallaJuego.class
@@ -56,8 +61,10 @@ iu\MainIU.class
 iu\PanelMapa.class
 iu\PanelMarcador.class
 red\FabricaMensajes.class
+iu\VentanaJuego$1.class
 iu\PantallaResumen.class
 red\MainRed.class
 red\EstadoVisible.class
+iu\TemaUI$1.class
 model\AnimalCliente.class
 red\Mensaje.class

@@ -58,6 +58,20 @@ class ClientModelTest {
     }
 
     @Test
+    void rectangleSelectionUsesTheSameInterpolatedPositionAsRendering() {
+        AnimalCliente animal = new AnimalCliente();
+        animal.setId(13);
+        animal.actualizarPos(new Punto(20, 30), 1_000L);
+        animal.actualizarPos(new Punto(40, 50), 2_000L);
+        Seleccion seleccion = new Seleccion();
+
+        seleccion.seleccionarEnRectangulo(new Vector<>(java.util.List.of(animal)),
+                new java.awt.Rectangle(29, 39, 2, 2), 1_500L);
+
+        assertTrue(seleccion.estaSeleccionado(13));
+    }
+
+    @Test
     void emptyVisibleStateDoesNotCreateAnimals() {
         ModeloJuego modelo = new ModeloJuego();
         EstadoVisible estado = new EstadoVisible();
@@ -67,6 +81,25 @@ class ClientModelTest {
         modelo.aplicarEstado(estado, 5L);
 
         assertNull(modelo.getAnimalEn(new Punto(0, 0)));
+        assertTrue(modelo.getAnimales().isEmpty());
+    }
+
+    @Test
+    void visibleStateKeepsTotalAliveCountAndReplacesPreviousZoneAnimals() {
+        ModeloJuego modelo = new ModeloJuego();
+        EstadoVisible primeraZona = estadoConAnimal(6, 10, 20, true);
+        primeraZona.animalesVivos = 8;
+        modelo.aplicarEstado(primeraZona, 1_000L);
+
+        EstadoVisible segundaZona = new EstadoVisible();
+        segundaZona.idZona = 5;
+        segundaZona.animales = new Vector<>();
+        segundaZona.tazas = new Vector<>();
+        segundaZona.animalesVivos = 8;
+        modelo.aplicarEstado(segundaZona, 2_000L);
+
+        assertEquals(8, modelo.getAnimalesVivos());
+        assertEquals(5, modelo.getZonaActual());
         assertTrue(modelo.getAnimales().isEmpty());
     }
 

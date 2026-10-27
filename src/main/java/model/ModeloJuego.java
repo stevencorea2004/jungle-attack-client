@@ -22,6 +22,8 @@ public class ModeloJuego extends Observable {
     private Map<Integer, AnimalCliente> animales = new HashMap<>();
     private Vector<Object> tazas = new Vector<>();
     private Punto bandera;
+    private String colorBandera;
+    private int animalesVivos;
     private int danio;
     private int tazasConsumidas;
     private int botsEliminados;
@@ -43,14 +45,16 @@ public class ModeloJuego extends Observable {
         tazasConsumidas = 0;
         botsEliminados = 0;
         tazas = new Vector<>();
-        bandera = new Punto();
+        bandera = null;
+        colorBandera = null;
+        animalesVivos = inicio.manada == null ? 0 : inicio.manada.size();
 
         if (inicio.manada != null) {
             for (VistaAnimal vista : inicio.manada) {
                 if (vista == null) {
                     continue;
                 }
-                agregarVistaAnimal(vista, System.currentTimeMillis());
+                agregarVistaAnimal(vista, System.currentTimeMillis(), animales);
                 if (vista.esMio && miEspecie == null) {
                     miEspecie = vista.especie;
                 }
@@ -67,29 +71,30 @@ public class ModeloJuego extends Observable {
         this.danio = estado.danio;
         this.tazasConsumidas = estado.tazasConsumidas;
         this.botsEliminados = estado.botsEliminados;
-        this.bandera = estado.bandera == null ? new Punto() : estado.bandera;
+        this.bandera = estado.bandera;
+        this.colorBandera = estado.colorBandera;
+        this.animalesVivos = estado.animalesVivos;
         this.tazas = estado.tazas == null ? new Vector<>() : new Vector<>(estado.tazas);
-        if (zonasVisibles == null) {
-            zonasVisibles = new Vector<>();
-        }
-        if (!zonasVisibles.contains(estado.idZona)) {
-            zonasVisibles.add(estado.idZona);
-        }
+        zonasVisibles = estado.zonasVisibles == null
+                ? new Vector<>() : new Vector<>(estado.zonasVisibles);
 
+        Map<Integer, AnimalCliente> anteriores = animales;
+        animales = new HashMap<>();
         if (estado.animales != null) {
             for (VistaAnimal vista : estado.animales) {
                 if (vista == null) {
                     continue;
                 }
-                agregarVistaAnimal(vista, recibido);
+                agregarVistaAnimal(vista, recibido, anteriores);
             }
         }
 
         notifyObservers(this);
     }
 
-    private void agregarVistaAnimal(VistaAnimal vista, long recibido) {
-        AnimalCliente animal = animales.getOrDefault(vista.id, new AnimalCliente());
+    private void agregarVistaAnimal(VistaAnimal vista, long recibido,
+            Map<Integer, AnimalCliente> anteriores) {
+        AnimalCliente animal = anteriores.getOrDefault(vista.id, new AnimalCliente());
         animal.setId(vista.id);
         animal.setEspecie(vista.especie);
         animal.setEsBot(vista.esBot);
@@ -148,6 +153,10 @@ public class ModeloJuego extends Observable {
     public void setTazas(Vector<Object> tazas) { this.tazas = tazas; }
     public Punto getBandera() { return bandera; }
     public void setBandera(Punto bandera) { this.bandera = bandera; }
+    public String getColorBandera() { return colorBandera; }
+    public void setColorBandera(String colorBandera) { this.colorBandera = colorBandera; }
+    public int getAnimalesVivos() { return animalesVivos; }
+    public void setAnimalesVivos(int animalesVivos) { this.animalesVivos = animalesVivos; }
     public int getDanio() { return danio; }
     public void setDanio(int danio) { this.danio = danio; }
     public int getTazasConsumidas() { return tazasConsumidas; }

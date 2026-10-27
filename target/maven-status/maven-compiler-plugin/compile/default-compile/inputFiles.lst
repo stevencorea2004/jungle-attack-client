@@ -19,6 +19,7 @@ C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\iu\
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\iu\SpriteBandera.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\iu\SpriteTaza.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\iu\SpriteZona.java
+C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\iu\TemaUI.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\iu\VentanaJuego.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\model\AnimalCliente.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\model\Especie.java
@@ -54,7 +55,9 @@ C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\red
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\red\ResumenPartida.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\red\TipoMensaje.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\red\VistaAnimal.java
+C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\red\VistaCamino.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\red\VistaMapa.java
+C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\red\VistaZona.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\util\Constantes.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\util\IObserver.java
 C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\src\main\java\util\MainUtil.java

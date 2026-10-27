@@ -21,16 +21,21 @@ public class Seleccion {
     }
 
     public void seleccionarEnRectangulo(Vector<AnimalCliente> animales, Rectangle area) {
+        seleccionarEnRectangulo(animales, area, System.currentTimeMillis());
+    }
+
+    void seleccionarEnRectangulo(Vector<AnimalCliente> animales, Rectangle area, long ahora) {
         if (animales == null || area == null) {
             return;
         }
         seleccionados.clear();
         for (AnimalCliente animal : animales) {
-            if (animal == null || animal.getPosActual() == null) {
+            if (animal == null) {
                 continue;
             }
-            int x = (int) Math.round(animal.getPosActual().getX());
-            int y = (int) Math.round(animal.getPosActual().getY());
+            Punto posicion = animal.posInterpolada(ahora);
+            int x = (int) Math.round(posicion.getX());
+            int y = (int) Math.round(posicion.getY());
             if (area.contains(x, y)) {
                 seleccionados.add(animal.getId());
             }

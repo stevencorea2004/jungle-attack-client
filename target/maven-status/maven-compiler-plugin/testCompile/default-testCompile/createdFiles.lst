@@ -1,1 +1,5 @@
+iu\UiRenderingTest.class
+model\ClientModelTest.class
+control\ControladoresTest.class
+control\ControladoresTest$FakeConexion.class
 red\RedClientTest.class

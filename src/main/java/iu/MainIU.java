@@ -5,5 +5,6 @@ public final class MainIU {
     }
 
     public static void main(String[] args) {
+        ClientMain.main(args);
     }
 }

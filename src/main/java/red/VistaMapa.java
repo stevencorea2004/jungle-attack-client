@@ -3,6 +3,6 @@ package red;
 import java.util.Vector;
 
 public class VistaMapa {
-    public Vector<?> zonas;
-    public Vector<?> caminos;
+    public Vector<VistaZona> zonas;
+    public Vector<VistaCamino> caminos;
 }

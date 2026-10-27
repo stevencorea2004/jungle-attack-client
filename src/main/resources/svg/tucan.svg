@@ -1,0 +1,111 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Emblema circular -->
+  <circle cx="32" cy="32" r="30" fill="#176536" stroke="#073B24" stroke-width="2.5"></circle>
+
+  <!-- Plumaje posterior -->
+  <path d="M12 43
+           L14 35 L12 30 L17 27
+           L18 21 L24 18 L29 15
+           L36 18 L41 24 L42 33
+           L39 42 L34 50 L25 53
+           L17 49 Z" fill="#17191B" stroke="#090B0C" stroke-width="1.3"></path>
+
+  <!-- Plumas laterales -->
+  <g fill="#292D2F">
+    <path d="M15 32 L21 27 L19 36 Z"></path>
+    <path d="M18 26 L24 21 L23 30 Z"></path>
+    <path d="M24 21 L29 18 L28 27 Z"></path>
+    <path d="M30 20 L35 22 L32 29 Z"></path>
+    <path d="M17 39 L23 34 L22 43 Z"></path>
+    <path d="M22 45 L28 40 L27 50 Z"></path>
+    <path d="M30 46 L36 39 L34 49 Z"></path>
+  </g>
+
+  <!-- Cabeza del tucán -->
+  <path d="M19 27
+           Q17 20 23 16
+           Q29 12 35 17
+           Q41 21 40 28
+           Q39 34 33 38
+           L25 36 Z" fill="#202325" stroke="#0B0C0D" stroke-width="1.2"></path>
+
+  <!-- Mejilla blanca -->
+  <path d="M22 23
+           Q26 18 32 21
+           L35 26 L32 31
+           L25 30 Z" fill="#F1E9D5"></path>
+
+  <!-- Parche ocular -->
+  <path d="M24 22
+           Q28 19 32 23
+           L32 28 Q28 31 24 28 Z" fill="#25B7D0"></path>
+
+  <!-- Ojo -->
+  <circle cx="29" cy="25" r="3" fill="#102C32"></circle>
+  <circle cx="29" cy="25" r="1.6" fill="#080D0F"></circle>
+  <circle cx="29.8" cy="24.2" r="0.8" fill="#FFFFFF"></circle>
+
+  <!-- Garganta amarilla -->
+  <path d="M17 31
+           Q22 29 26 33
+           Q30 38 29 45
+           L25 51 Q19 48 16 42 Z" fill="#F3D23E"></path>
+
+  <!-- Zona luminosa de la garganta -->
+  <path d="M19 34
+           Q22 33 25 37
+           L25 43 L21 42 Z" fill="#FFE978"></path>
+
+  <!-- Pico: silueta principal curvada -->
+  <path d="M32 21
+           Q39 17 46 20
+           Q54 22 56 27
+           Q57 31 52 35
+           Q47 39 40 39
+           L34 36
+           Q31 32 31 27 Z" fill="#F2C52F" stroke="#48331A" stroke-width="1.3"></path>
+
+  <!-- Parte superior amarilla -->
+  <path d="M34 22
+           Q42 19 49 23
+           L46 27
+           L35 27 Z" fill="#FFE45B"></path>
+
+  <!-- Banda naranja -->
+  <path d="M33 27
+           Q41 26 51 27
+           L54 29
+           Q49 34 41 36
+           L34 33 Z" fill="#F28B24"></path>
+
+  <!-- Punta roja -->
+  <path d="M43 36
+           Q50 33 54 29
+           Q56 32 51 36
+           Q47 39 40 39 Z" fill="#D94B36"></path>
+
+  <!-- Base oscura del pico -->
+  <path d="M32 22
+           Q35 21 38 22
+           L36 27 L32 28 Z" fill="#F7D94C"></path>
+
+  <!-- Punta negra -->
+  <path d="M51 23
+           Q56 24 56 28
+           L53 30 L49 27 Z" fill="#252729"></path>
+
+  <!-- Separación del pico -->
+  <path d="M34 28 Q42 29 51 28" fill="none" stroke="#B96B21" stroke-width="0.9"></path>
+
+  <!-- Detalles del plumaje -->
+  <g fill="none" stroke="#45494B" stroke-width="0.8" stroke-linecap="round">
+    <path d="M16 35 L20 32"></path>
+    <path d="M18 42 L22 39"></path>
+    <path d="M23 47 L27 44"></path>
+    <path d="M29 47 L32 43"></path>
+  </g>
+
+  <!-- Brillo del pico -->
+  <path d="M38 23 Q43 21 47 24" fill="none" stroke="#FFF0A0" stroke-width="1" stroke-linecap="round"></path>
+</svg>

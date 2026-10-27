@@ -8,12 +8,27 @@ import util.Observable;
 public abstract class Pantalla extends JPanel implements IObserver {
     protected ModeloJuego modelo;
 
+    protected Pantalla(ModeloJuego modelo) {
+        this.modelo = modelo;
+        setOpaque(false);
+    }
+
     public abstract void construir();
 
     public abstract void refrescar();
 
     @Override
     public void update(Object source, Observable ob) {
-        throw new UnsupportedOperationException("Pendiente de implementación");
+        if (javax.swing.SwingUtilities.isEventDispatchThread()) {
+            refrescar();
+            revalidate();
+            repaint();
+        } else {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                refrescar();
+                revalidate();
+                repaint();
+            });
+        }
     }
 }
