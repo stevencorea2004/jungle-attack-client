@@ -14,9 +14,21 @@
     <property name="os.name" value="Windows 11"/>
     <property name="java.vm.specification.version" value="25"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
+<<<<<<< HEAD
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Eclipse Adoptium\jdk-25.0.4.101-hotspot\bin"/>
     <property name="sun.java.command" value="C:\Users\steve\AppData\Local\Temp\surefire2635682387786073829\surefirebooter-20261026215609880_3.jar C:\Users\steve\AppData\Local\Temp\surefire2635682387786073829 2026-10-26T21-56-09_770-jvmRun1 surefire-20261026215609880_1tmp surefire_0-20261026215609880_2tmp"/>
+=======
+<<<<<<< HEAD
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Eclipse Adoptium\jdk-25.0.4.101-hotspot\bin"/>
+    <property name="sun.java.command" value="C:\Users\steve\AppData\Local\Temp\surefire12837700482661470871\surefirebooter-20261026031625914_3.jar C:\Users\steve\AppData\Local\Temp\surefire12837700482661470871 2026-10-26T03-16-25_769-jvmRun1 surefire-20261026031625914_1tmp surefire_0-20261026031625914_2tmp"/>
+=======
+    <property name="user.country" value="ES"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-27\bin"/>
+    <property name="sun.java.command" value="C:\Users\Marfr\AppData\Local\Temp\surefire4057324367761542875\surefirebooter-20261025234854951_3.jar C:\Users\Marfr\AppData\Local\Temp\surefire4057324367761542875 2026-10-25T23-48-54_828-jvmRun1 surefire-20261025234854951_1tmp surefire_0-20261025234854951_2tmp"/>
+>>>>>>> 08a9ee895a38774417a0090a35ca1bf4d63eebee
+>>>>>>> 17e7875485b078132fc66f86b141ae5a9c924881
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\target\test-classes;C:\Users\steve\OneDrive\Escritorio\Caso#2\jungle-attack-client\target\classes;C:\Users\steve\.m2\repository\com\google\code\gson\gson\2.11.0\gson-2.11.0.jar;C:\Users\steve\.m2\repository\com\google\errorprone\error_prone_annotations\2.27.0\error_prone_annotations-2.27.0.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-transcoder\1.18\batik-transcoder-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-anim\1.18\batik-anim-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-css\1.18\batik-css-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-ext\1.18\batik-ext-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-parser\1.18\batik-parser-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-svg-dom\1.18\batik-svg-dom-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-awt-util\1.18\batik-awt-util-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\xmlgraphics-commons\2.10\xmlgraphics-commons-2.10.jar;C:\Users\steve\.m2\repository\commons-io\commons-io\2.11.0\commons-io-2.11.0.jar;C:\Users\steve\.m2\repository\commons-logging\commons-logging\1.0.4\commons-logging-1.0.4.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-bridge\1.18\batik-bridge-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-script\1.18\batik-script-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-dom\1.18\batik-dom-1.18.jar;C:\Users\steve\.m2\repository\xml-apis\xml-apis\1.4.01\xml-apis-1.4.01.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-gvt\1.18\batik-gvt-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-shared-resources\1.18\batik-shared-resources-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-svggen\1.18\batik-svggen-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-util\1.18\batik-util-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-constants\1.18\batik-constants-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-i18n\1.18\batik-i18n-1.18.jar;C:\Users\steve\.m2\repository\org\apache\xmlgraphics\batik-xml\1.18\batik-xml-1.18.jar;C:\Users\steve\.m2\repository\xml-apis\xml-apis-ext\1.3.04\xml-apis-ext-1.3.04.jar;C:\Users\steve\.m2\repository\org\junit\jupiter\junit-jupiter\5.11.4\junit-jupiter-5.11.4.jar;C:\Users\steve\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.11.4\junit-jupiter-api-5.11.4.jar;C:\Users\steve\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\steve\.m2\repository\org\junit\platform\junit-platform-commons\1.11.4\junit-platform-commons-1.11.4.jar;C:\Users\steve\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\steve\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.11.4\junit-jupiter-params-5.11.4.jar;C:\Users\steve\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.11.4\junit-jupiter-engine-5.11.4.jar;C:\Users\steve\.m2\repository\org\junit\platform\junit-platform-engine\1.11.4\junit-platform-engine-1.11.4.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -31,7 +43,15 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
+<<<<<<< HEAD
     <property name="surefire.real.class.path" value="C:\Users\steve\AppData\Local\Temp\surefire2635682387786073829\surefirebooter-20261026215609880_3.jar"/>
+=======
+<<<<<<< HEAD
+    <property name="surefire.real.class.path" value="C:\Users\steve\AppData\Local\Temp\surefire12837700482661470871\surefirebooter-20261026031625914_3.jar"/>
+=======
+    <property name="surefire.real.class.path" value="C:\Users\Marfr\AppData\Local\Temp\surefire4057324367761542875\surefirebooter-20261025234854951_3.jar"/>
+>>>>>>> 08a9ee895a38774417a0090a35ca1bf4d63eebee
+>>>>>>> 17e7875485b078132fc66f86b141ae5a9c924881
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="25.0.4.1+1-LTS"/>
@@ -62,9 +82,21 @@
     <property name="java.class.version" value="69.0"/>
   </properties>
   <testcase name="observableNotifiesAndRemovesObservers" classname="model.ClientModelTest" time="0.001"/>
+<<<<<<< HEAD
   <testcase name="appliesVisibleStateAndPreservesAnimalAcrossSnapshots" classname="model.ClientModelTest" time="0.003"/>
   <testcase name="selectsAnimalsWithinRectangleAndTogglesSelection" classname="model.ClientModelTest" time="0.0"/>
   <testcase name="rectangleSelectionUsesTheSameInterpolatedPositionAsRendering" classname="model.ClientModelTest" time="0.0"/>
   <testcase name="emptyVisibleStateDoesNotCreateAnimals" classname="model.ClientModelTest" time="0.001"/>
   <testcase name="visibleStateKeepsTotalAliveCountAndReplacesPreviousZoneAnimals" classname="model.ClientModelTest" time="0.0"/>
+=======
+<<<<<<< HEAD
+  <testcase name="appliesVisibleStateAndPreservesAnimalAcrossSnapshots" classname="model.ClientModelTest" time="0.003"/>
+  <testcase name="selectsAnimalsWithinRectangleAndTogglesSelection" classname="model.ClientModelTest" time="0.001"/>
+  <testcase name="emptyVisibleStateDoesNotCreateAnimals" classname="model.ClientModelTest" time="0.0"/>
+=======
+  <testcase name="appliesVisibleStateAndPreservesAnimalAcrossSnapshots" classname="model.ClientModelTest" time="0.002"/>
+  <testcase name="selectsAnimalsWithinRectangleAndTogglesSelection" classname="model.ClientModelTest" time="0.0"/>
+  <testcase name="emptyVisibleStateDoesNotCreateAnimals" classname="model.ClientModelTest" time="0.002"/>
+>>>>>>> 08a9ee895a38774417a0090a35ca1bf4d63eebee
+>>>>>>> 17e7875485b078132fc66f86b141ae5a9c924881
 </testsuite>
