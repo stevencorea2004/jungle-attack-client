@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Emblema -->
+  <circle cx="32" cy="32" r="30" fill="#176536" stroke="#073B24" stroke-width="2.5"></circle>
+
+  <!-- Oreja trasera -->
+  <path d="M30 23 Q31 8 42 7 Q49 8 46 21 L39 29 Z" fill="#604332" stroke="#30231B" stroke-width="1.5"></path>
+  <path d="M35 21 Q36 12 42 11 Q45 12 42 21 L38 25 Z" fill="#39291F"></path>
+
+  <!-- Oreja delantera -->
+  <path d="M12 26 Q5 15 13 12 Q22 11 25 24 L20 32 Z" fill="#79563F" stroke="#30231B" stroke-width="1.5"></path>
+  <path d="M13 18 Q12 15 15 16 Q19 19 20 24 L17 25 Z" fill="#38281F"></path>
+
+  <!-- Cabeza y cuello -->
+  <path d="M13 30 Q13 18 25 17 Q37 15 43 24
+           Q49 29 50 37 L48 43 L42 47
+           L33 45 L26 52 L18 48 Q12 41 13 30 Z" fill="#604332" stroke="#30231B" stroke-width="1.5"></path>
+
+  <!-- Sombra de mejilla -->
+  <path d="M17 29 Q20 23 29 23 Q34 25 35 32
+           L31 42 L24 47 L19 42 Z" fill="#72513B"></path>
+
+  <!-- Perfil del hocico -->
+  <path d="M35 29 Q43 29 47 35
+           Q51 42 49 49 Q48 54 44 53
+           Q40 52 40 46 L37 40 L32 36 Z" fill="#795840" stroke="#30231B" stroke-width="1.4"></path>
+
+  <!-- Sombra del hocico -->
+  <path d="M42 39 Q47 43 46 50 Q44 52 43 48 Z" fill="#543B2B"></path>
+
+  <!-- Ojo -->
+  <ellipse cx="34" cy="29" rx="4" ry="3.5" fill="#3B2A20"></ellipse>
+  <circle cx="35" cy="29" r="2" fill="#D6A64D"></circle>
+  <circle cx="35" cy="29" r="1" fill="#161311"></circle>
+  <circle cx="35.6" cy="28.4" r="0.6" fill="#FFFFFF"></circle>
+
+  <!-- Línea de la boca -->
+  <path d="M37 41 Q42 43 45 46" fill="none" stroke="#38271D" stroke-width="1.2" stroke-linecap="round"></path>
+
+  <!-- Fosas nasales -->
+  <ellipse cx="46" cy="50" rx="1.4" ry="0.9" fill="#30221A"></ellipse>
+
+  <!-- Detalles del pelaje -->
+  <g fill="none" stroke="#8C694D" stroke-width="1" stroke-linecap="round">
+    <path d="M20 25 L24 22 M23 32 L27 29 M20 38 L24 36"></path>
+    <path d="M27 43 L30 40 M33 23 L36 25"></path>
+  </g>
+</svg>

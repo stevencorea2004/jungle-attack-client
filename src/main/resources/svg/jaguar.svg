@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Emblema -->
+  <circle cx="32" cy="32" r="30" fill="#176536" stroke="#073B24" stroke-width="2.5"></circle>
+
+  <!-- Orejas -->
+  <path d="M10 25 Q5 12 15 12 Q22 13 25 23 Z" fill="#F2B43D" stroke="#38271D" stroke-width="1.5"></path>
+  <path d="M54 25 Q59 12 49 12 Q42 13 39 23 Z" fill="#F2B43D" stroke="#38271D" stroke-width="1.5"></path>
+  <path d="M12 18 Q16 15 20 22 L15 22 Z M52 18 Q48 15 44 22 L49 22 Z" fill="#70432B"></path>
+
+  <!-- Cabeza -->
+  <path d="M14 30 Q12 18 23 15 Q28 12 32 13
+           Q36 12 41 15 Q52 18 50 30
+           L48 41 Q44 52 32 55 Q20 52 16 41 Z" fill="#EBAA32" stroke="#38271D" stroke-width="1.5"></path>
+
+  <!-- Sombras laterales -->
+  <path d="M16 30 Q17 23 23 21 L21 34 L25 44 L20 47 L16 40 Z" fill="#D58A25"></path>
+  <path d="M48 30 Q47 23 41 21 L43 34 L39 44 L44 47 L48 40 Z" fill="#D58A25"></path>
+
+  <!-- Rosetas -->
+  <g fill="#35251B">
+    <path d="M24 19 l3 -2 2 3 -2 2 Z"></path>
+    <path d="M31 17 l2 -2 3 3 -2 2 Z"></path>
+    <path d="M38 19 l3 -2 2 3 -2 2 Z"></path>
+    <path d="M19 25 l3 -2 2 3 -3 2 Z"></path>
+    <path d="M27 24 l3 -2 2 3 -3 2 Z"></path>
+    <path d="M35 24 l3 -2 2 3 -3 2 Z"></path>
+    <path d="M43 25 l3 -2 2 3 -3 2 Z"></path>
+    <path d="M17 32 l3 -2 2 3 -3 2 Z"></path>
+    <path d="M25 31 l3 -2 2 3 -3 2 Z"></path>
+    <path d="M37 31 l3 -2 2 3 -3 2 Z"></path>
+    <path d="M45 32 l3 -2 2 3 -3 2 Z"></path>
+    <path d="M19 39 l3 -2 2 3 -3 2 Z"></path>
+    <path d="M43 39 l3 -2 2 3 -3 2 Z"></path>
+  </g>
+
+  <!-- Ojos -->
+  <path d="M18 32 Q23 27 29 32 Q26 38 21 36 Z" fill="#F8E9B6" stroke="#38271D" stroke-width="1.2"></path>
+  <path d="M46 32 Q41 27 35 32 Q38 38 43 36 Z" fill="#F8E9B6" stroke="#38271D" stroke-width="1.2"></path>
+  <ellipse cx="24" cy="33" rx="2" ry="2.7" fill="#C99B26"></ellipse>
+  <ellipse cx="40" cy="33" rx="2" ry="2.7" fill="#C99B26"></ellipse>
+  <circle cx="24" cy="33" r="1.2" fill="#171717"></circle>
+  <circle cx="40" cy="33" r="1.2" fill="#171717"></circle>
+
+  <!-- Hocico -->
+  <path d="M20 40 Q25 36 30 41 L32 45 L34 41 Q39 36 44 40
+           Q43 48 32 51 Q21 48 20 40 Z" fill="#F5E4BD"></path>
+  <path d="M28 40 Q32 37 36 40 L32 44 Z" fill="#39271D"></path>
+  <path d="M32 44 L32 47 M32 47 Q28 51 24 47 M32 47 Q36 51 40 47" fill="none" stroke="#39271D" stroke-width="1.2" stroke-linecap="round"></path>
+
+  <!-- Puntos de bigotes -->
+  <g fill="#49301D">
+    <circle cx="23" cy="42" r="0.7"></circle>
+    <circle cx="26" cy="44" r="0.7"></circle>
+    <circle cx="24" cy="46" r="0.7"></circle>
+    <circle cx="41" cy="42" r="0.7"></circle>
+    <circle cx="38" cy="44" r="0.7"></circle>
+    <circle cx="40" cy="46" r="0.7"></circle>
+  </g>
+
+  <!-- Bigotes -->
+  <g fill="none" stroke="#F5E4BD" stroke-width="0.65" stroke-linecap="round">
+    <path d="M23 43 L12 41 M24 45 L13 46 M41 43 L52 41 M40 45 L51 46"></path>
+  </g>
+</svg>

@@ -1,6 +1,8 @@
+iu\CacheSvg$BufferedImageTranscoder.class
 iu\SpriteTaza.class
 red\ManejadorError.class
 model\ModeloJuego.class
+iu\TemaUI.class
 red\ConexionServidor.class
 red\DatosAtacar.class
 red\DespachadorMensajes.class
@@ -56,8 +58,10 @@ iu\MainIU.class
 iu\PanelMapa.class
 iu\PanelMarcador.class
 red\FabricaMensajes.class
+iu\VentanaJuego$1.class
 iu\PantallaResumen.class
 red\MainRed.class
 red\EstadoVisible.class
+iu\TemaUI$1.class
 model\AnimalCliente.class
 red\Mensaje.class

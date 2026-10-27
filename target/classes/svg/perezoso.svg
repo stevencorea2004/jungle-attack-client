@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Emblema -->
+  <circle cx="32" cy="32" r="30" fill="#176536" stroke="#073B24" stroke-width="2.5"></circle>
+
+  <!-- Silueta de la cabeza -->
+  <path d="M12 33 L15 25 L13 21 L20 20 L19 15
+           L27 17 L32 12 L37 17 L45 15 L44 20
+           L51 21 L49 26 L52 33 L49 42
+           L44 49 L37 53 L32 55 L27 53
+           L20 49 L15 42 Z" fill="#A78C70" stroke="#65513F" stroke-width="1.2"></path>
+
+  <!-- Mechones exteriores -->
+  <g fill="#BBA084">
+    <path d="M17 24 L21 20 L23 26 Z"></path>
+    <path d="M24 19 L28 16 L29 23 Z"></path>
+    <path d="M32 18 L35 15 L37 23 Z"></path>
+    <path d="M40 20 L44 18 L43 26 Z"></path>
+    <path d="M15 32 L20 28 L20 36 Z"></path>
+    <path d="M49 31 L45 28 L45 36 Z"></path>
+    <path d="M18 42 L23 40 L22 47 Z"></path>
+    <path d="M46 42 L41 40 L42 47 Z"></path>
+  </g>
+
+  <!-- Pelaje interior -->
+  <path d="M18 27 Q22 18 32 19 Q42 18 46 27
+           L44 39 L39 47 L32 50 L25 47 L20 39 Z" fill="#92775D"></path>
+
+  <!-- Máscara facial -->
+  <path d="M14 31 Q18 23 26 25 L32 30
+           L38 25 Q46 23 50 31 L46 39
+           L39 43 L32 38 L25 43 L18 39 Z" fill="#514235"></path>
+
+  <!-- Cara clara -->
+  <path d="M19 33 Q23 28 28 32 L32 35
+           L36 32 Q41 28 45 33
+           Q44 42 32 47 Q20 42 19 33 Z" fill="#EAD6B2"></path>
+
+  <!-- Ojos -->
+  <ellipse cx="25" cy="32" rx="4.2" ry="4.5" fill="#342A21"></ellipse>
+  <ellipse cx="39" cy="32" rx="4.2" ry="4.5" fill="#342A21"></ellipse>
+  <circle cx="25" cy="32" r="2.1" fill="#171513"></circle>
+  <circle cx="39" cy="32" r="2.1" fill="#171513"></circle>
+  <circle cx="25.7" cy="31.2" r="0.8" fill="#FFFFFF"></circle>
+  <circle cx="39.7" cy="31.2" r="0.8" fill="#FFFFFF"></circle>
+
+  <!-- Hocico -->
+  <path d="M26 38 Q32 34 38 38 L36 43
+           Q32 46 28 43 Z" fill="#F4E5C9"></path>
+
+  <!-- Nariz -->
+  <path d="M28 38 Q32 35 36 38 L32 42 Z" fill="#40332A"></path>
+  <circle cx="30.5" cy="38.5" r="0.7" fill="#777064"></circle>
+  <circle cx="33.5" cy="38.5" r="0.7" fill="#777064"></circle>
+
+  <!-- Boca -->
+  <path d="M32 42 L32 44 M32 44 Q29 46 27 44 M32 44 Q35 46 37 44" fill="none" stroke="#6D5744" stroke-width="1.1" stroke-linecap="round"></path>
+
+  <!-- Textura del pelaje -->
+  <g fill="none" stroke="#705A46" stroke-width="0.9" stroke-linecap="round">
+    <path d="M20 24 L23 27 M29 21 L30 25 M36 21 L35 25"></path>
+    <path d="M17 38 L20 40 M23 46 L26 48 M41 46 L38 48 M44 38 L47 40"></path>
+  </g>
+</svg>
