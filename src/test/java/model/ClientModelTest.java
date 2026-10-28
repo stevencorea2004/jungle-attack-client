@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
 import java.util.Vector;
 import org.junit.jupiter.api.Test;
 import red.EstadoVisible;
@@ -31,12 +32,14 @@ class ClientModelTest {
     void appliesVisibleStateAndPreservesAnimalAcrossSnapshots() {
         ModeloJuego modelo = new ModeloJuego();
         EstadoVisible estado = estadoConAnimal(6, 10, 20, true);
+        estado.animalesPorZona = Map.of(4, 7, 5, 3);
         modelo.aplicarEstado(estado, 1_000L);
 
         AnimalCliente animal = modelo.getAnimales().get(6);
         assertNotNull(animal);
         assertEquals(1, modelo.getMisAnimales().size());
         assertEquals(4, modelo.getZonaActual());
+        assertEquals(Map.of(4, 7, 5, 3), modelo.getAnimalesPorZona());
 
         modelo.aplicarEstado(estadoConAnimal(6, 30, 40, true), 2_000L);
         assertEquals(animal, modelo.getAnimales().get(6));

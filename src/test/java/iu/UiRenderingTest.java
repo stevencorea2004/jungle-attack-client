@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import control.ControladorJuego;
 import control.ControladorLobby;
+import model.AnimalCliente;
 import model.Especie;
 import model.ModeloJuego;
 import model.Punto;
@@ -73,6 +74,40 @@ class UiRenderingTest {
     }
 
     @Test
+    void selectedAnimalIconsSupportExclusiveAndShiftRemoval() {
+        ModeloJuego modelo = new ModeloJuego();
+        AnimalCliente primero = new AnimalCliente();
+        primero.setId(1);
+        primero.setEsMio(true);
+        primero.setEspecie(Especie.JAGUAR);
+        AnimalCliente segundo = new AnimalCliente();
+        segundo.setId(2);
+        segundo.setEsMio(true);
+        segundo.setEspecie(Especie.DANTA);
+        modelo.setAnimales(java.util.Map.of(1, primero, 2, segundo));
+
+        Seleccion seleccion = new Seleccion();
+        seleccion.seleccionar(1);
+        seleccion.seleccionar(2);
+        PanelMarcador marcador = new PanelMarcador(modelo, seleccion);
+        marcador.setSize(250, 580);
+        int iconX = 48;
+        int iconY = 383;
+
+        marcador.dispatchEvent(new java.awt.event.MouseEvent(marcador,
+                java.awt.event.MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0,
+                iconX, iconY, 1, false, java.awt.event.MouseEvent.BUTTON1));
+        assertEquals(java.util.Set.of(1), seleccion.getSeleccionados());
+
+        seleccion.seleccionar(2);
+        marcador.dispatchEvent(new java.awt.event.MouseEvent(marcador,
+                java.awt.event.MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(),
+                java.awt.event.MouseEvent.SHIFT_DOWN_MASK,
+                iconX, iconY, 1, false, java.awt.event.MouseEvent.BUTTON1));
+        assertEquals(java.util.Set.of(2), seleccion.getSeleccionados());
+    }
+
+    @Test
     void regionViewMapsMouseCoordinatesToFocusedZone() {
         ModeloJuego modelo = new ModeloJuego();
         VistaMapa mapa = new VistaMapa();
@@ -91,7 +126,47 @@ class UiRenderingTest {
         panel.setSize(800, 500);
         assertEquals(new Punto(480, 360), panel.pantallaAMundo(new java.awt.Point(400, 250)));
         assertEquals(new java.awt.Point(400, 250), panel.mundoAPantalla(new Punto(480, 360)));
+        panel.doLayout();
+        Component minimapa = findNamed(panel, "minimapa");
+        assertNotNull(minimapa);
+        assertEquals(14, minimapa.getX());
+        assertTrue(minimapa.getY() > panel.getHeight() / 2);
         panel.detenerAnimacion();
+    }
+
+    @Test
+    void minimapShowsFogAndLargeAnimalCountsOnExploredZones() {
+        ModeloJuego modelo = new ModeloJuego();
+        VistaMapa mapa = new VistaMapa();
+        VistaZona primera = new VistaZona();
+        primera.id = 1;
+        primera.ancho = 320;
+        primera.alto = 240;
+        VistaZona segunda = new VistaZona();
+        segunda.id = 2;
+        segunda.x = 320;
+        segunda.ancho = 320;
+        segunda.alto = 240;
+        mapa.zonas = new Vector<>(List.of(primera, segunda));
+        mapa.caminos = new Vector<>();
+        modelo.setMapa(mapa);
+        modelo.setZonaActual(1);
+        modelo.setZonasVisibles(new Vector<>(List.of(1)));
+        modelo.setAnimalesPorZona(java.util.Map.of(1, 12));
+
+        PanelMinimapa minimapa = new PanelMinimapa(modelo);
+        minimapa.setSize(220, 150);
+        BufferedImage canvas = new BufferedImage(220, 150, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = canvas.createGraphics();
+        minimapa.paint(graphics);
+        graphics.dispose();
+
+        Color zonaConAnimales = new Color(canvas.getRGB(15, 25), true);
+        Color zonaConNiebla = new Color(canvas.getRGB(205, 25), true);
+        assertTrue(zonaConAnimales.getGreen() > zonaConAnimales.getRed());
+        assertTrue(Math.abs(zonaConNiebla.getRed() - zonaConNiebla.getGreen()) < 8);
+        assertTrue(contienePixelBlanco(canvas, new Rectangle(40, 65, 40, 32)),
+                "El conteo debe aparecer grande en el centro de la zona explorada");
     }
 
     @Test
@@ -199,6 +274,16 @@ class UiRenderingTest {
     }
 
     @Test
+    void lobbyConvertsRoomCodeToUppercaseAsItIsEntered() {
+        PantallaLobby lobby = new PantallaLobby(new ModeloJuego(), null, null);
+        javax.swing.JTextField codigo = (javax.swing.JTextField) findNamed(lobby, "codigoPartida");
+
+        codigo.setText("a1b2");
+
+        assertEquals("A1B2", codigo.getText());
+    }
+
+    @Test
     void waitingScreenExitButtonFitsInsideItsCard() {
         PantallaEspera espera = new PantallaEspera(new ModeloJuego(), () -> { });
         espera.setSize(900, 600);
@@ -273,11 +358,11 @@ class UiRenderingTest {
         assertTrue(!modelo.isSeleccionConfirmada());
         assertEquals(textoAyuda, ayuda.getText());
         assertEquals(colorAyuda, ayuda.getForeground());
-        assertTrue(((javax.swing.JButton) findNamed(seleccion, "entrarAlBosque")).isEnabled());
+        assertTrue(!((javax.swing.JButton) findNamed(seleccion, "entrarAlBosque")).isEnabled());
         assertTrue(((javax.swing.JButton) findNamed(seleccion, "especie-JAGUAR")).isEnabled());
         JLabel estadoSeleccion = (JLabel) findNamed(seleccion, "estadoSeleccion");
-        assertEquals("Selecciona una especie para continuar", estadoSeleccion.getText());
-        assertEquals(TemaUI.CREMA, estadoSeleccion.getForeground());
+        assertEquals("La especie ya fue elegida por el otro jugador", estadoSeleccion.getText());
+        assertEquals(new Color(166, 55, 44), estadoSeleccion.getForeground());
     }
 
     @Test
@@ -301,6 +386,45 @@ class UiRenderingTest {
         seleccion.refrescar();
 
         assertEquals(List.of(Boolean.TRUE), destinos);
+    }
+
+    @Test
+    void deselectButtonReleasesAcceptedChoiceBeforeRivalSelects() {
+        ModeloJuego modelo = new ModeloJuego();
+        FakeConexion conexion = new FakeConexion();
+        PantallaSeleccion seleccion = new PantallaSeleccion(modelo,
+                new ControladorLobby(conexion), () -> { });
+        seleccion.setSize(1000, 700);
+        layoutRecursivamente(seleccion);
+        ((javax.swing.JButton) findNamed(seleccion, "especie-JAGUAR")).doClick();
+        assertTrue(((javax.swing.JButton) findNamed(seleccion, "deseleccionarAnimal")).isVisible());
+
+        modelo.setMiEspecie(Especie.JAGUAR);
+        modelo.setSeleccionConfirmada(true);
+        seleccion.refrescar();
+        ((javax.swing.JButton) findNamed(seleccion, "deseleccionarAnimal")).doClick();
+
+        assertEquals(TipoMensaje.DESELECT_ANIMAL, conexion.ultimo.getTipo());
+        assertTrue(((javax.swing.JButton) findNamed(seleccion, "deseleccionarAnimal")).isVisible());
+
+        modelo.setSeleccionConfirmada(false);
+        seleccion.refrescar();
+        assertEquals(null, modelo.getMiEspecie());
+        assertTrue(!((javax.swing.JButton) findNamed(seleccion, "deseleccionarAnimal")).isVisible());
+    }
+
+    @Test
+    void deselectButtonHidesAfterRivalSelects() {
+        ModeloJuego modelo = new ModeloJuego();
+        PantallaSeleccion seleccion = new PantallaSeleccion(modelo,
+                new ControladorLobby(new FakeConexion()), () -> { });
+        seleccion.setSize(1000, 700);
+        layoutRecursivamente(seleccion);
+        ((javax.swing.JButton) findNamed(seleccion, "especie-JAGUAR")).doClick();
+        modelo.setEspecieRival(Especie.DANTA);
+        seleccion.refrescar();
+
+        assertTrue(!((javax.swing.JButton) findNamed(seleccion, "deseleccionarAnimal")).isVisible());
     }
 
     @Test
@@ -341,19 +465,31 @@ class UiRenderingTest {
         ModeloJuego modelo = new ModeloJuego();
         modelo.setEspeciesDisponibles(new Vector<>(Arrays.asList(Especie.values())));
         boolean[] continued = {false};
-        PantallaSeleccion pantalla = new PantallaSeleccion(modelo, null, () -> continued[0] = true);
+        FakeConexion conexion = new FakeConexion();
+        PantallaSeleccion pantalla = new PantallaSeleccion(modelo,
+                new ControladorLobby(conexion), () -> continued[0] = true);
 
         ((javax.swing.JButton) findNamed(pantalla, "especie-JAGUAR")).doClick();
         ((javax.swing.JButton) findNamed(pantalla, "entrarAlBosque")).doClick();
 
         assertFalse(continued[0]);
-        assertEquals("Confirmando especie...", ((JLabel) findNamed(pantalla, "estadoSeleccion")).getText());
+        assertEquals(TipoMensaje.SELECT_ANIMAL, conexion.ultimo.getTipo());
 
         Vector<Especie> restantes = new Vector<>(Arrays.asList(Especie.values()));
         restantes.remove(Especie.JAGUAR);
         modelo.setEspeciesDisponibles(restantes);
+        modelo.setMiEspecie(Especie.JAGUAR);
+        modelo.setSeleccionConfirmada(true);
         pantalla.refrescar();
 
+        assertFalse(continued[0]);
+        assertEquals("Especie confirmada. Esperando al otro jugador...",
+                ((JLabel) findNamed(pantalla, "estadoSeleccion")).getText());
+
+        DatosInicio inicio = new DatosInicio();
+        inicio.mapa = new VistaMapa();
+        modelo.aplicarInicio(inicio);
+        pantalla.refrescar();
         assertTrue(continued[0]);
     }
 
@@ -362,7 +498,8 @@ class UiRenderingTest {
         ModeloJuego modelo = new ModeloJuego();
         modelo.setEspeciesDisponibles(new Vector<>(Arrays.asList(Especie.values())));
         boolean[] continued = {false};
-        PantallaSeleccion pantalla = new PantallaSeleccion(modelo, null, () -> continued[0] = true);
+        PantallaSeleccion pantalla = new PantallaSeleccion(modelo,
+                new ControladorLobby(new FakeConexion()), () -> continued[0] = true);
 
         ((javax.swing.JButton) findNamed(pantalla, "especie-JAGUAR")).doClick();
         ((javax.swing.JButton) findNamed(pantalla, "entrarAlBosque")).doClick();
@@ -416,6 +553,18 @@ class UiRenderingTest {
             }
         }
         return null;
+    }
+
+    private boolean contienePixelBlanco(BufferedImage imagen, Rectangle area) {
+        for (int y = area.y; y < area.y + area.height; y++) {
+            for (int x = area.x; x < area.x + area.width; x++) {
+                Color pixel = new Color(imagen.getRGB(x, y), true);
+                if (pixel.getRed() > 220 && pixel.getGreen() > 220 && pixel.getBlue() > 220) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static final class FakeConexion extends ConexionServidor {

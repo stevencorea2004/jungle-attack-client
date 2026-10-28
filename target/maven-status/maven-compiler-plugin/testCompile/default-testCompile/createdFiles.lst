@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 iu\UiRenderingTest.class
 util\UtilTest$1.class
 util\UtilTest.class
-=======
->>>>>>> 00f312ba43552de5b991b5295a0bd793baf13646
 control\ControladoresTest.class
 control\ControladoresTest$FakeConexion.class
 model\ClientModelTest.class

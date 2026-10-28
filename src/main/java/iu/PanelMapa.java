@@ -15,6 +15,8 @@ import java.awt.Graphics;
     import java.util.Vector;
     import javax.swing.JPanel;
     import javax.swing.Timer;
+    import java.awt.event.ComponentAdapter;
+    import java.awt.event.ComponentEvent;
     import model.AnimalCliente;
     import model.ModeloJuego;
     import model.Punto;
@@ -33,11 +35,21 @@ import java.awt.Graphics;
         private Rectangle seleccionVisual;
         private Integer animalBajoCursor;
         private final ControladorMouse controladorMouse;
+        private final PanelMinimapa minimapa;
 
         public PanelMapa(ModeloJuego modelo, Seleccion seleccion, control.ControladorJuego controlador) {
             this.modelo = modelo;
             this.seleccion = seleccion;
             this.controladorMouse = new ControladorMouse(controlador, this);
+            this.minimapa = new PanelMinimapa(modelo);
+            setLayout(null);
+            add(minimapa);
+            addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    posicionarMinimapa();
+                }
+            });
             setOpaque(true);
             setBackground(new Color(24, 65, 44));
             setPreferredSize(new java.awt.Dimension(900, 600));
@@ -46,6 +58,17 @@ import java.awt.Graphics;
             addMouseMotionListener(controladorMouse);
             refresco = new Timer(1000 / Constantes.FPS, e -> repaint());
             refresco.start();
+        }
+
+        @Override
+        public void doLayout() {
+            posicionarMinimapa();
+        }
+
+        private void posicionarMinimapa() {
+            int ancho = Math.min(220, Math.max(150, getWidth() / 4));
+            int alto = Math.min(150, Math.max(105, getHeight() / 4));
+            minimapa.setBounds(14, Math.max(8, getHeight() - alto - 14), ancho, alto);
         }
 
         @Override

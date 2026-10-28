@@ -1,3 +1,4 @@
+iu\PanelMinimapa.class
 iu\DialogoError.class
 iu\CacheSvg$BufferedImageTranscoder.class
 iu\SpriteTaza.class
@@ -27,6 +28,7 @@ red\IManejadorMensaje.class
 util\IObserver.class
 model\MainModel$ContadorObserver.class
 model\Seleccion.class
+iu\PanelMapa$1.class
 model\Punto.class
 red\VistaZona.class
 red\ResumenPartida.class
@@ -56,6 +58,7 @@ util\MainUtil.class
 util\Observable.class
 model\Especie.class
 util\Constantes.class
+iu\PantallaLobby$1.class
 iu\Pantalla.class
 red\DatosVerZona.class
 iu\CacheSvg.class

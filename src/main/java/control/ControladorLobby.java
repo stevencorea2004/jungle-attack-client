@@ -42,4 +42,11 @@ public class ControladorLobby {
         payload.especie = especie;
         conexion.enviar(FabricaMensajes.crear(TipoMensaje.SELECT_ANIMAL, payload));
     }
+
+    public void deseleccionarEspecie() {
+        if (conexion == null) {
+            return;
+        }
+        conexion.enviar(FabricaMensajes.crear(TipoMensaje.DESELECT_ANIMAL, null));
+    }
 }

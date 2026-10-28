@@ -323,7 +323,7 @@ Métodos:
 - PantallaLobby: Pide el nickname y permite crear partida o unirse con código.
 - PantallaEspera: Muestra el código mientras llega el segundo jugador.
 - PantallaSeleccion: Las 7 especies; las tomadas salen deshabilitadas.
-- PantallaJuego: Contiene el PanelMapa y el PanelMarcador; muestra una región ampliada, permite recorrer todas las regiones con flechas y ofrece salir de la partida.
+- PantallaJuego: Contiene el PanelMapa, el minimapa y el PanelMarcador; muestra una región ampliada, permite recorrer todas las regiones con flechas y ofrece salir de la partida. El minimapa marca con niebla las zonas sin animales propios y muestra en grande el total de animales en cada zona ocupada.
 - PantallaResumen: Muestra bots eliminados, animales perdidos, tazas y duración.
 
 Las regiones se recorren con los botones de navegación; los animales que cruzan una salida de camino hacia una zona vecina hacen que la vista los siga. Las regiones sin animales propios se muestran en escala de grises con el símbolo de niebla. Se puede salir desde espera, selección o juego.

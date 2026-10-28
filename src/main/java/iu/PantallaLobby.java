@@ -7,7 +7,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.Locale;
 import java.util.function.Consumer;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -80,6 +85,19 @@ public class PantallaLobby extends Pantalla {
         unirse.setPreferredSize(new Dimension(260, 44));
         codigo = new JTextField();
         codigo.setName("codigoPartida");
+        ((AbstractDocument) codigo.getDocument()).setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass bypass, int offset, String texto,
+                    AttributeSet atributos) throws BadLocationException {
+                super.insertString(bypass, offset, convertirAMayusculas(texto), atributos);
+            }
+
+            @Override
+            public void replace(FilterBypass bypass, int offset, int longitud, String texto,
+                    AttributeSet atributos) throws BadLocationException {
+                super.replace(bypass, offset, longitud, convertirAMayusculas(texto), atributos);
+            }
+        });
         codigo.setMaximumSize(new Dimension(220, 40));
         codigo.setPreferredSize(new Dimension(220, 40));
         codigo.setHorizontalAlignment(JTextField.CENTER);
@@ -152,7 +170,7 @@ public class PantallaLobby extends Pantalla {
             modelo.setNickname(nombre);
         }
         if (unirse) {
-            String clave = codigo.getText().trim().toUpperCase(java.util.Locale.ROOT);
+            String clave = codigo.getText().trim();
             if (clave.length() != 4 || !clave.matches("[A-Z0-9]{4}")) {
                 DialogoError.mostrar(this, "El codigo debe tener 4 letras o numeros.");
                 codigo.requestFocusInWindow();
@@ -168,11 +186,15 @@ public class PantallaLobby extends Pantalla {
         modelo.setCodigoPartida(null);
         modelo.setUltimoError(null);
         if (unirse) {
-            controlador.unirse(nombre, codigo.getText().trim().toUpperCase(java.util.Locale.ROOT));
+            controlador.unirse(nombre, codigo.getText().trim());
         } else {
             controlador.crearPartida(nombre);
         }
         mensaje.setText("Preparando partida...");
         mensaje.setForeground(TemaUI.VERDE_HOJA);
+    }
+
+    private static String convertirAMayusculas(String texto) {
+        return texto == null ? null : texto.toUpperCase(Locale.ROOT);
     }
 }

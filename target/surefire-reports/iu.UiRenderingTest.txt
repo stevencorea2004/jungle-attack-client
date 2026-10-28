@@ -1,8 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: iu.UiRenderingTest
 -------------------------------------------------------------------------------
-<<<<<<< HEAD
-Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.616 s -- in iu.UiRenderingTest
-=======
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.667 s -- in iu.UiRenderingTest
->>>>>>> 00f312ba43552de5b991b5295a0bd793baf13646
+Tests run: 21, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.607 s -- in iu.UiRenderingTest

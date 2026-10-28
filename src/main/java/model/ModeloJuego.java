@@ -19,6 +19,7 @@ public class ModeloJuego extends Observable {
     private VistaMapa mapa;
     private int zonaActual;
     private Vector<Integer> zonasVisibles;
+    private Map<Integer, Integer> animalesPorZona = new HashMap<>();
     private Map<Integer, AnimalCliente> animales = new HashMap<>();
     private Vector<Object> tazas = new Vector<>();
     private Punto bandera;
@@ -39,6 +40,10 @@ public class ModeloJuego extends Observable {
         zonaActual = inicio.zonaPropia;
         zonasVisibles = new Vector<>();
         zonasVisibles.add(inicio.zonaPropia);
+        animalesPorZona = new HashMap<>();
+        if (inicio.manada != null) {
+            animalesPorZona.put(inicio.zonaPropia, inicio.manada.size());
+        }
         animales.clear();
         miEspecie = null;
         resumen = null;
@@ -79,6 +84,8 @@ public class ModeloJuego extends Observable {
         this.tazas = estado.tazas == null ? new Vector<>() : new Vector<>(estado.tazas);
         zonasVisibles = estado.zonasVisibles == null
                 ? new Vector<>() : new Vector<>(estado.zonasVisibles);
+        animalesPorZona = estado.animalesPorZona == null
+                ? new HashMap<>() : new HashMap<>(estado.animalesPorZona);
 
         Map<Integer, AnimalCliente> anteriores = animales;
         animales = new HashMap<>();
@@ -145,6 +152,7 @@ public class ModeloJuego extends Observable {
         mapa = null;
         zonaActual = 0;
         zonasVisibles = new Vector<>();
+        animalesPorZona.clear();
         animales.clear();
         tazas = new Vector<>();
         bandera = null;
@@ -175,6 +183,10 @@ public class ModeloJuego extends Observable {
     public void setZonaActual(int zonaActual) { this.zonaActual = zonaActual; }
     public Vector<Integer> getZonasVisibles() { return zonasVisibles; }
     public void setZonasVisibles(Vector<Integer> zonasVisibles) { this.zonasVisibles = zonasVisibles; }
+    public Map<Integer, Integer> getAnimalesPorZona() { return new HashMap<>(animalesPorZona); }
+    public void setAnimalesPorZona(Map<Integer, Integer> animalesPorZona) {
+        this.animalesPorZona = animalesPorZona == null ? new HashMap<>() : new HashMap<>(animalesPorZona);
+    }
     public Map<Integer, AnimalCliente> getAnimales() { return animales; }
     public void setAnimales(Map<Integer, AnimalCliente> animales) { this.animales = animales; }
     public Vector<Object> getTazas() { return tazas; }
