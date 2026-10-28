@@ -1,14 +1,16 @@
 package iu;
 
-import control.ControladorLobby;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.util.Vector;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import control.ControladorLobby;
 import model.Especie;
 import model.ModeloJuego;
 
@@ -68,7 +70,6 @@ public class PantallaSeleccion extends Pantalla {
         opciones.add(filaSuperior);
         opciones.add(filaInferior);
         add(opciones, BorderLayout.CENTER);
-<<<<<<< HEAD
         ayuda = TemaUI.etiqueta("Elige una especie disponible y pulsa Entrar al bosque",
                 Font.PLAIN, 13f, TemaUI.CREMA);
         ayuda.setName("ayudaSeleccionAnimal");
@@ -93,30 +94,6 @@ public class PantallaSeleccion extends Pantalla {
             estado.setForeground(TemaUI.CREMA);
             botonEmpezar.setEnabled(false);
             controlador.elegirEspecie(seleccionada);
-=======
-        estado = TemaUI.etiqueta("Selecciona una especie para continuar", Font.PLAIN, 14f, TemaUI.CREMA);
-        estado.setName("estadoSeleccion");
-        JButton empezar = TemaUI.boton("Entrar al bosque");
-        empezar.setName("entrarAlBosque");
-        empezar.addActionListener(e -> {
-            if (seleccionPendiente) {
-                return;
-            }
-            if (seleccionada == null) {
-                estado.setText("Primero elige una especie");
-                return;
-            }
-            if (modelo != null) {
-                modelo.setUltimoError(null);
-                modelo.setMiEspecie(seleccionada);
-            }
-            seleccionPendiente = true;
-            estado.setText("Confirmando especie...");
-            if (controlador != null) {
-                controlador.elegirEspecie(seleccionada);
-            }
-            repaint();
->>>>>>> 00f312ba43552de5b991b5295a0bd793baf13646
         });
         JPanel pie = new JPanel(new BorderLayout(14, 0));
         pie.setOpaque(false);
@@ -240,13 +217,9 @@ public class PantallaSeleccion extends Pantalla {
             }
             opcion.addActionListener(e -> {
                 seleccionada = especie;
-<<<<<<< HEAD
-                estado.setText(especie.getNombre() + " seleccionado");
-=======
                 estado.setText(especieRival == null
                         ? especie.getNombre() + " seleccionado"
                         : "Rival: " + especieRival.getNombre() + " | " + especie.getNombre() + " seleccionado");
->>>>>>> 00f312ba43552de5b991b5295a0bd793baf13646
                 estado.setForeground(TemaUI.CREMA);
                 cargarEspecies();
             });
