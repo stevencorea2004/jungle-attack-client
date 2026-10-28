@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -13,6 +14,7 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Vector;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -316,6 +318,61 @@ class UiRenderingTest {
         Rectangle last = filaSuperior.getComponent(2).getBounds();
         double centerItems = (first.getMinX() + last.getMaxX()) / 2.0;
         assertEquals(filaSuperior.getWidth() / 2.0, centerItems, 1.0);
+    }
+
+    @Test
+    void opponentSpeciesIsDisabledAndAnyConflictingLocalChoiceIsCleared() {
+        ModeloJuego modelo = new ModeloJuego();
+        modelo.setEspeciesDisponibles(new Vector<>(Arrays.asList(Especie.values())));
+        PantallaSeleccion pantalla = new PantallaSeleccion(modelo, null, () -> { });
+
+        ((javax.swing.JButton) findNamed(pantalla, "especie-JAGUAR")).doClick();
+        modelo.setEspecieRival(Especie.JAGUAR);
+        pantalla.refrescar();
+
+        assertFalse(((javax.swing.JButton) findNamed(pantalla, "especie-JAGUAR")).isEnabled());
+        assertEquals("El rival eligio Jaguar. Selecciona otra especie.",
+                ((JLabel) findNamed(pantalla, "estadoSeleccion")).getText());
+        assertTrue(((javax.swing.JButton) findNamed(pantalla, "especie-DANTA")).isEnabled());
+    }
+
+    @Test
+    void selectionWaitsForServerConfirmationBeforeEnteringGame() {
+        ModeloJuego modelo = new ModeloJuego();
+        modelo.setEspeciesDisponibles(new Vector<>(Arrays.asList(Especie.values())));
+        boolean[] continued = {false};
+        PantallaSeleccion pantalla = new PantallaSeleccion(modelo, null, () -> continued[0] = true);
+
+        ((javax.swing.JButton) findNamed(pantalla, "especie-JAGUAR")).doClick();
+        ((javax.swing.JButton) findNamed(pantalla, "entrarAlBosque")).doClick();
+
+        assertFalse(continued[0]);
+        assertEquals("Confirmando especie...", ((JLabel) findNamed(pantalla, "estadoSeleccion")).getText());
+
+        Vector<Especie> restantes = new Vector<>(Arrays.asList(Especie.values()));
+        restantes.remove(Especie.JAGUAR);
+        modelo.setEspeciesDisponibles(restantes);
+        pantalla.refrescar();
+
+        assertTrue(continued[0]);
+    }
+
+    @Test
+    void rejectedSelectionKeepsPlayerOnSelectionScreenAndShowsServerError() {
+        ModeloJuego modelo = new ModeloJuego();
+        modelo.setEspeciesDisponibles(new Vector<>(Arrays.asList(Especie.values())));
+        boolean[] continued = {false};
+        PantallaSeleccion pantalla = new PantallaSeleccion(modelo, null, () -> continued[0] = true);
+
+        ((javax.swing.JButton) findNamed(pantalla, "especie-JAGUAR")).doClick();
+        ((javax.swing.JButton) findNamed(pantalla, "entrarAlBosque")).doClick();
+        modelo.setUltimoError("La especie no está disponible para este jugador");
+        pantalla.refrescar();
+
+        assertFalse(continued[0]);
+        assertEquals("La especie no está disponible para este jugador",
+                ((JLabel) findNamed(pantalla, "estadoSeleccion")).getText());
+        assertEquals(null, modelo.getMiEspecie());
     }
 
     private void render(JPanel panel) {
