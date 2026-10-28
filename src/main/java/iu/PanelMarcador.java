@@ -154,7 +154,7 @@ public class PanelMarcador extends JPanel {
             return animales;
         }
         for (AnimalCliente animal : modelo.getMisAnimales()) {
-            if (seleccion.estaSeleccionado(animal.getId())) {
+            if (animal.getEnergia() > 0 && seleccion.estaSeleccionado(animal.getId())) {
                 animales.add(animal);
             }
         }

@@ -46,6 +46,7 @@ public class ControladorMouse extends MouseAdapter {
         Point fin = e.getPoint();
         double desplazamiento = inicioArrastre.distance(fin);
         if (e.getButton() == MouseEvent.BUTTON3) {
+            limpiarSeleccionInvalida();
             if (controlador != null && panel.getSeleccion() != null
                     && !panel.getSeleccion().getSeleccionados().isEmpty()) {
                 controlador.moverSeleccionados(panel.pantallaAMundo(fin));
@@ -71,18 +72,20 @@ public class ControladorMouse extends MouseAdapter {
             return;
         }
         java.util.List<AnimalCliente> propias = panel.getModelo() == null
-                ? java.util.List.of() : panel.getModelo().getMisAnimales();
+                ? java.util.List.of() : panel.getModelo().getMisAnimales().stream()
+                        .filter(this::estaVivo).toList();
         seleccion.seleccionarEnRectangulo(propias, panel.rectanguloMundo(inicio, fin));
     }
 
     private void clickEnMapa(Point posicionPantalla, boolean alternar) {
         AnimalCliente animal = panel.animalCercano(posicionPantalla);
         Seleccion seleccion = panel.getSeleccion();
-        if (animal == null) {
+        if (animal == null || !estaVivo(animal)) {
             return;
         }
         if (animal.isEsMio()) {
             if (seleccion != null) {
+                limpiarSeleccionInvalida();
                 if (alternar) {
                     seleccion.alternar(animal.getId());
                 } else {
@@ -91,9 +94,29 @@ public class ControladorMouse extends MouseAdapter {
                 }
                 panel.repaint();
             }
-        } else if (controlador != null && seleccion != null
-                && !seleccion.getSeleccionados().isEmpty()) {
-            controlador.atacar(animal.getId());
+        } else {
+            limpiarSeleccionInvalida();
+            if (controlador != null && seleccion != null
+                    && !seleccion.getSeleccionados().isEmpty()) {
+                controlador.atacar(animal.getId());
+            }
         }
+    }
+
+    private void limpiarSeleccionInvalida() {
+        Seleccion seleccion = panel.getSeleccion();
+        if (seleccion == null || panel.getModelo() == null) {
+            return;
+        }
+        for (Integer id : seleccion.getSeleccionados()) {
+            AnimalCliente animal = panel.getModelo().getAnimales().get(id);
+            if (animal == null || !animal.isEsMio() || !estaVivo(animal)) {
+                seleccion.deseleccionar(id);
+            }
+        }
+    }
+
+    private boolean estaVivo(AnimalCliente animal) {
+        return animal != null && animal.getEnergia() > 0;
     }
 }

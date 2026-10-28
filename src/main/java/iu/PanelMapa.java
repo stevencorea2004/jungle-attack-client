@@ -41,7 +41,12 @@ import java.awt.Graphics;
             this.modelo = modelo;
             this.seleccion = seleccion;
             this.controladorMouse = new ControladorMouse(controlador, this);
-            this.minimapa = new PanelMinimapa(modelo);
+            this.minimapa = new PanelMinimapa(modelo,
+                    idZona -> {
+                        if (controlador != null) {
+                            controlador.verZona(idZona);
+                        }
+                    });
             setLayout(null);
             add(minimapa);
             addComponentListener(new ComponentAdapter() {
@@ -217,7 +222,7 @@ import java.awt.Graphics;
                 return null;
             }
             for (AnimalCliente animal : modelo.getAnimales().values()) {
-                if (animal == null) {
+                if (animal == null || animal.getEnergia() <= 0) {
                     continue;
                 }
                 Punto posicion = animal.posInterpolada(System.currentTimeMillis());

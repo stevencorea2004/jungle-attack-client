@@ -20,6 +20,7 @@ public class VentanaJuego extends JFrame implements IObserver {
     private final Map<String, Pantalla> pantallas = new LinkedHashMap<>();
     private ModeloJuego modelo;
     private PantallaJuego pantallaJuego;
+    private PantallaSeleccion pantallaSeleccion;
     private final Seleccion seleccion;
     private final JPanel contenedor;
     private final ControladorJuego controladorJuego;
@@ -43,16 +44,15 @@ public class VentanaJuego extends JFrame implements IObserver {
                 crear -> mostrarPantalla(crear ? "espera" : "seleccion")));
         agregarPantalla("espera", new PantallaEspera(modelo,
                 () -> mostrarPantalla("seleccion"), this::salirPartida));
-        agregarPantalla("seleccion", new PantallaSeleccion(modelo, controladorLobby,
-                () -> mostrarPantalla("juego"), this::salirPartida));
+        pantallaSeleccion = new PantallaSeleccion(modelo, controladorLobby,
+                () -> mostrarPantalla("juego"), this::salirPartida);
+        agregarPantalla("seleccion", pantallaSeleccion);
         pantallaJuego = new PantallaJuego(modelo, controladorJuego, seleccion, () -> {
             salirPartida();
         });
         agregarPantalla("juego", pantallaJuego);
         agregarPantalla("resumen", new PantallaResumen(modelo, () -> {
-            if (this.modelo != null) {
-                this.modelo.setResumen(null);
-            }
+            limpiarEstadoPartida();
             mostrarPantalla("lobby");
         }));
 
@@ -96,13 +96,20 @@ public class VentanaJuego extends JFrame implements IObserver {
         if (controladorJuego != null) {
             controladorJuego.salirPartida();
         }
+        limpiarEstadoPartida();
+        mostrarPantalla("lobby");
+    }
+
+    private void limpiarEstadoPartida() {
         if (seleccion != null) {
             seleccion.limpiar();
+        }
+        if (pantallaSeleccion != null) {
+            pantallaSeleccion.reiniciarSeleccion();
         }
         if (modelo != null) {
             modelo.reiniciarPartida();
         }
-        mostrarPantalla("lobby");
     }
 
     @Override

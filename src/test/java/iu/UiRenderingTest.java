@@ -79,10 +79,12 @@ class UiRenderingTest {
         AnimalCliente primero = new AnimalCliente();
         primero.setId(1);
         primero.setEsMio(true);
+        primero.setEnergia(20);
         primero.setEspecie(Especie.JAGUAR);
         AnimalCliente segundo = new AnimalCliente();
         segundo.setId(2);
         segundo.setEsMio(true);
+        segundo.setEnergia(20);
         segundo.setEspecie(Especie.DANTA);
         modelo.setAnimales(java.util.Map.of(1, primero, 2, segundo));
 
@@ -105,6 +107,56 @@ class UiRenderingTest {
                 java.awt.event.MouseEvent.SHIFT_DOWN_MASK,
                 iconX, iconY, 1, false, java.awt.event.MouseEvent.BUTTON1));
         assertEquals(java.util.Set.of(2), seleccion.getSeleccionados());
+    }
+
+    @Test
+    void mapSelectionIgnoresDeadAndOtherPlayersAnimals() {
+        ModeloJuego modelo = new ModeloJuego();
+        AnimalCliente propioVivo = animal(1, true, 20, 200, 200);
+        AnimalCliente propioMuerto = animal(2, true, 0, 250, 250);
+        AnimalCliente rival = animal(3, false, 20, 300, 300);
+        modelo.setAnimales(java.util.Map.of(
+                propioVivo.getId(), propioVivo,
+                propioMuerto.getId(), propioMuerto,
+                rival.getId(), rival));
+        Seleccion seleccion = new Seleccion();
+        PanelMapa panel = new PanelMapa(modelo, seleccion, null);
+        panel.setSize(1280, 720);
+
+        clickMapa(panel, 250, 250);
+        assertTrue(seleccion.getSeleccionados().isEmpty());
+        clickMapa(panel, 300, 300);
+        assertTrue(seleccion.getSeleccionados().isEmpty());
+
+        panel.dispatchEvent(new java.awt.event.MouseEvent(panel,
+                java.awt.event.MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0,
+                100, 100, 1, false, java.awt.event.MouseEvent.BUTTON1));
+        panel.dispatchEvent(new java.awt.event.MouseEvent(panel,
+                java.awt.event.MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0,
+                350, 350, 1, false, java.awt.event.MouseEvent.BUTTON1));
+
+        assertEquals(java.util.Set.of(1), seleccion.getSeleccionados());
+        panel.detenerAnimacion();
+    }
+
+    @Test
+    void resettingSelectionScreenClearsConfirmedAndLocalAnimalSelection() {
+        ModeloJuego modelo = new ModeloJuego();
+        PantallaSeleccion pantalla = new PantallaSeleccion(modelo, null, () -> { });
+        pantalla.setSize(1000, 700);
+        ((javax.swing.JButton) findNamed(pantalla, "especie-PEREZOSO")).doClick();
+        assertTrue(((javax.swing.JButton) findNamed(pantalla, "entrarAlBosque")).isEnabled());
+        modelo.setMiEspecie(Especie.JAGUAR);
+        modelo.setEspecieRival(Especie.DANTA);
+        modelo.setSeleccionConfirmada(true);
+
+        pantalla.reiniciarSeleccion();
+
+        assertEquals(null, modelo.getMiEspecie());
+        assertEquals(null, modelo.getEspecieRival());
+        assertFalse(modelo.isSeleccionConfirmada());
+        assertFalse(((javax.swing.JButton) findNamed(pantalla, "entrarAlBosque")).isEnabled());
+        assertFalse(((javax.swing.JButton) findNamed(pantalla, "deseleccionarAnimal")).isVisible());
     }
 
     @Test
@@ -167,6 +219,63 @@ class UiRenderingTest {
         assertTrue(Math.abs(zonaConNiebla.getRed() - zonaConNiebla.getGreen()) < 8);
         assertTrue(contienePixelBlanco(canvas, new Rectangle(40, 65, 40, 32)),
                 "El conteo debe aparecer grande en el centro de la zona explorada");
+    }
+
+    @Test
+    void clickingMinimapZoneSelectsThatZone() {
+        ModeloJuego modelo = new ModeloJuego();
+        VistaMapa mapa = new VistaMapa();
+        VistaZona primera = new VistaZona();
+        primera.id = 1;
+        primera.ancho = 320;
+        primera.alto = 240;
+        VistaZona segunda = new VistaZona();
+        segunda.id = 2;
+        segunda.x = 320;
+        segunda.ancho = 320;
+        segunda.alto = 240;
+        mapa.zonas = new Vector<>(List.of(primera, segunda));
+        modelo.setMapa(mapa);
+        int[] zonaSeleccionada = {-1};
+
+        PanelMinimapa minimapa = new PanelMinimapa(modelo, id -> zonaSeleccionada[0] = id);
+        minimapa.setSize(220, 150);
+        minimapa.dispatchEvent(new java.awt.event.MouseEvent(minimapa,
+                java.awt.event.MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0,
+                160, 80, 1, false, java.awt.event.MouseEvent.BUTTON1));
+
+        assertEquals(2, zonaSeleccionada[0]);
+    }
+
+    @Test
+    void clickingMinimapZoneSendsViewZoneCommand() {
+        ModeloJuego modelo = new ModeloJuego();
+        VistaMapa mapa = new VistaMapa();
+        VistaZona primera = new VistaZona();
+        primera.id = 1;
+        primera.ancho = 320;
+        primera.alto = 240;
+        VistaZona segunda = new VistaZona();
+        segunda.id = 2;
+        segunda.x = 320;
+        segunda.ancho = 320;
+        segunda.alto = 240;
+        mapa.zonas = new Vector<>(List.of(primera, segunda));
+        modelo.setMapa(mapa);
+        FakeConexion conexion = new FakeConexion();
+        PanelMapa panel = new PanelMapa(modelo, new Seleccion(),
+                new ControladorJuego(conexion, new Seleccion()));
+        panel.setSize(800, 500);
+        panel.doLayout();
+        Component minimapa = findNamed(panel, "minimapa");
+
+        minimapa.dispatchEvent(new java.awt.event.MouseEvent(minimapa,
+                java.awt.event.MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0,
+                160, 80, 1, false, java.awt.event.MouseEvent.BUTTON1));
+
+        assertEquals(TipoMensaje.VIEW_ZONE, conexion.ultimo.getTipo());
+        assertEquals(2, ((DatosVerZona) conexion.ultimo.getPayload(DatosVerZona.class)).idZona);
+        panel.detenerAnimacion();
     }
 
     @Test
@@ -442,6 +551,12 @@ class UiRenderingTest {
         Rectangle last = filaSuperior.getComponent(2).getBounds();
         double centerItems = (first.getMinX() + last.getMaxX()) / 2.0;
         assertEquals(filaSuperior.getWidth() / 2.0, centerItems, 1.0);
+        for (Component tarjeta : filaSuperior.getComponents()) {
+            assertEquals(first.getSize(), tarjeta.getBounds().getSize());
+        }
+        for (Component tarjeta : filaInferior.getComponents()) {
+            assertEquals(first.getSize(), tarjeta.getBounds().getSize());
+        }
     }
 
     @Test
@@ -565,6 +680,24 @@ class UiRenderingTest {
             }
         }
         return false;
+    }
+
+    private static AnimalCliente animal(int id, boolean esMio, int energia, double x, double y) {
+        AnimalCliente animal = new AnimalCliente();
+        animal.setId(id);
+        animal.setEsMio(esMio);
+        animal.setEnergia(energia);
+        animal.setPosActual(new Punto(x, y));
+        return animal;
+    }
+
+    private static void clickMapa(PanelMapa panel, int x, int y) {
+        panel.dispatchEvent(new java.awt.event.MouseEvent(panel,
+                java.awt.event.MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0,
+                x, y, 1, false, java.awt.event.MouseEvent.BUTTON1));
+        panel.dispatchEvent(new java.awt.event.MouseEvent(panel,
+                java.awt.event.MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0,
+                x, y, 1, false, java.awt.event.MouseEvent.BUTTON1));
     }
 
     private static final class FakeConexion extends ConexionServidor {

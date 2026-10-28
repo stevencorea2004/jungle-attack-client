@@ -5,11 +5,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.IntConsumer;
 import javax.swing.JPanel;
 import model.ModeloJuego;
 import red.VistaCamino;
@@ -21,13 +25,31 @@ final class PanelMinimapa extends JPanel {
     private static final Color ZONA_EXPLORADA = new Color(64, 117, 70);
     private static final Color ZONA_NUBLADA = new Color(95, 98, 97);
     private final ModeloJuego modelo;
+    private final IntConsumer seleccionarZona;
 
     PanelMinimapa(ModeloJuego modelo) {
+        this(modelo, null);
+    }
+
+    PanelMinimapa(ModeloJuego modelo, IntConsumer seleccionarZona) {
         this.modelo = modelo;
+        this.seleccionarZona = seleccionarZona;
         setName("minimapa");
         setOpaque(false);
-        setToolTipText("Minimapa: animales propios por región");
+        setToolTipText("Haz clic en una zona para verla");
         setPreferredSize(new java.awt.Dimension(220, 150));
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() != MouseEvent.BUTTON1) {
+                    return;
+                }
+                int idZona = zonaEn(e.getPoint());
+                if (idZona != -1 && PanelMinimapa.this.seleccionarZona != null) {
+                    PanelMinimapa.this.seleccionarZona.accept(idZona);
+                }
+            }
+        });
     }
 
     @Override
@@ -54,22 +76,7 @@ final class PanelMinimapa extends JPanel {
             g.dispose();
             return;
         }
-        int margen = 8;
-        double x = margen;
-        double y = 20;
-        double ancho = Math.max(1, getWidth() - margen * 2);
-        double alto = Math.max(1, getHeight() - y - margen);
-        Map<Integer, Rectangle2D.Double> rectangulos = new HashMap<>();
-        for (VistaZona zona : mapa.zonas) {
-            if (zona == null || zona.ancho <= 0.0 || zona.alto <= 0.0) {
-                continue;
-            }
-            double zonaX = x + (zona.x - limites.getX()) * ancho / limites.getWidth();
-            double zonaY = y + (zona.y - limites.getY()) * alto / limites.getHeight();
-            double zonaAncho = zona.ancho * ancho / limites.getWidth();
-            double zonaAlto = zona.alto * alto / limites.getHeight();
-            rectangulos.put(zona.id, new Rectangle2D.Double(zonaX, zonaY, zonaAncho, zonaAlto));
-        }
+        Map<Integer, Rectangle2D.Double> rectangulos = rectangulosZonas(mapa, limites);
 
         dibujarConexiones(g, mapa, rectangulos);
         BufferedImage iconoNiebla = CacheSvg.getInstancia().getImagen("svg/niebla.svg");
@@ -100,6 +107,46 @@ final class PanelMinimapa extends JPanel {
             }
         }
         g.dispose();
+    }
+
+    int zonaEn(Point punto) {
+        if (punto == null || modelo == null || modelo.getMapa() == null
+                || modelo.getMapa().zonas == null) {
+            return -1;
+        }
+        VistaMapa mapa = modelo.getMapa();
+        Rectangle2D limites = limitesMapa(mapa);
+        if (limites == null) {
+            return -1;
+        }
+        Map<Integer, Rectangle2D.Double> rectangulos = rectangulosZonas(mapa, limites);
+        for (VistaZona zona : mapa.zonas) {
+            Rectangle2D.Double rectangulo = zona == null ? null : rectangulos.get(zona.id);
+            if (rectangulo != null && rectangulo.contains(punto)) {
+                return zona.id;
+            }
+        }
+        return -1;
+    }
+
+    private Map<Integer, Rectangle2D.Double> rectangulosZonas(VistaMapa mapa, Rectangle2D limites) {
+        int margen = 8;
+        double x = margen;
+        double y = 20;
+        double ancho = Math.max(1, getWidth() - margen * 2);
+        double alto = Math.max(1, getHeight() - y - margen);
+        Map<Integer, Rectangle2D.Double> rectangulos = new HashMap<>();
+        for (VistaZona zona : mapa.zonas) {
+            if (zona == null || zona.ancho <= 0.0 || zona.alto <= 0.0) {
+                continue;
+            }
+            double zonaX = x + (zona.x - limites.getX()) * ancho / limites.getWidth();
+            double zonaY = y + (zona.y - limites.getY()) * alto / limites.getHeight();
+            double zonaAncho = zona.ancho * ancho / limites.getWidth();
+            double zonaAlto = zona.alto * alto / limites.getHeight();
+            rectangulos.put(zona.id, new Rectangle2D.Double(zonaX, zonaY, zonaAncho, zonaAlto));
+        }
+        return rectangulos;
     }
 
     private void dibujarCantidad(Graphics2D g, int idZona, Rectangle2D.Double rectangulo) {

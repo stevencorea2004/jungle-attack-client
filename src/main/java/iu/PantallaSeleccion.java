@@ -60,12 +60,12 @@ public class PantallaSeleccion extends Pantalla {
         encabezado.add(estado);
         add(encabezado, BorderLayout.NORTH);
 
-        opciones = new JPanel(new java.awt.GridLayout(2, 1, 0, 16));
+        opciones = new JPanel(new java.awt.GridLayout(2, 1, 0, 6));
         opciones.setOpaque(false);
         filaSuperior = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 16, 0));
         filaSuperior.setOpaque(false);
         filaSuperior.setName("filaSuperiorEspecies");
-        filaInferior = new JPanel(new java.awt.GridLayout(1, 4, 16, 0));
+        filaInferior = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 16, 0));
         filaInferior.setOpaque(false);
         filaInferior.setName("filaInferiorEspecies");
         opciones.add(filaSuperior);
@@ -170,6 +170,24 @@ public class PantallaSeleccion extends Pantalla {
             estado.setText(seleccionada.getNombre() + " seleccionado");
             estado.setForeground(TemaUI.CREMA);
         } else {
+            estado.setText("Selecciona una especie para continuar");
+            estado.setForeground(TemaUI.CREMA);
+        }
+        cargarEspecies();
+        actualizarAcciones();
+    }
+
+    public void reiniciarSeleccion() {
+        seleccionada = null;
+        solicitudPendiente = false;
+        deseleccionPendiente = false;
+        juegoNotificado = false;
+        if (modelo != null) {
+            modelo.setMiEspecie(null);
+            modelo.setEspecieRival(null);
+            modelo.setSeleccionConfirmada(false);
+        }
+        if (estado != null) {
             estado.setText("Selecciona una especie para continuar");
             estado.setForeground(TemaUI.CREMA);
         }
