@@ -21,6 +21,8 @@ public class PantallaLobby extends Pantalla {
     private JTextField nickname;
     private JTextField codigo;
     private JLabel mensaje;
+    private boolean solicitudEnCurso;
+    private boolean crearPendiente;
 
     public PantallaLobby(ModeloJuego modelo, ControladorLobby controlador, Consumer<Boolean> continuar) {
         super(modelo);
@@ -124,17 +126,25 @@ public class PantallaLobby extends Pantalla {
 
     @Override
     public void refrescar() {
-        if (modelo != null && modelo.getUltimoError() != null && mensaje != null) {
-            mensaje.setText(modelo.getUltimoError());
-            mensaje.setForeground(new java.awt.Color(166, 55, 44));
+        if (mensaje == null || modelo == null || !solicitudEnCurso) {
+            return;
+        }
+        if (modelo.getUltimoError() != null && !modelo.getUltimoError().isBlank()) {
+            solicitudEnCurso = false;
+            mensaje.setText("Ingresa tu nombre para comenzar");
+            mensaje.setForeground(TemaUI.VERDE_HOJA);
+        } else if (modelo.getCodigoPartida() != null && !modelo.getCodigoPartida().isBlank()) {
+            solicitudEnCurso = false;
+            if (continuar != null) {
+                continuar.accept(crearPendiente);
+            }
         }
     }
 
     private void iniciar(boolean unirse) {
         String nombre = nickname.getText().trim();
         if (nombre.isEmpty()) {
-            mensaje.setText("Escribe tu nombre antes de continuar");
-            mensaje.setForeground(new java.awt.Color(166, 55, 44));
+            DialogoError.mostrar(this, "Escribe tu nombre antes de continuar.");
             nickname.requestFocusInWindow();
             return;
         }
@@ -144,21 +154,25 @@ public class PantallaLobby extends Pantalla {
         if (unirse) {
             String clave = codigo.getText().trim().toUpperCase(java.util.Locale.ROOT);
             if (clave.length() != 4 || !clave.matches("[A-Z0-9]{4}")) {
-                mensaje.setText("El codigo debe tener 4 letras o numeros");
-                mensaje.setForeground(new java.awt.Color(166, 55, 44));
+                DialogoError.mostrar(this, "El codigo debe tener 4 letras o numeros.");
                 codigo.requestFocusInWindow();
                 return;
             }
-            if (controlador != null) {
-                controlador.unirse(nombre, clave);
-            }
-        } else if (controlador != null) {
+        }
+        if (controlador == null || modelo == null) {
+            DialogoError.mostrar(this, "No hay una conexion disponible con el servidor.");
+            return;
+        }
+        solicitudEnCurso = true;
+        crearPendiente = !unirse;
+        modelo.setCodigoPartida(null);
+        modelo.setUltimoError(null);
+        if (unirse) {
+            controlador.unirse(nombre, codigo.getText().trim().toUpperCase(java.util.Locale.ROOT));
+        } else {
             controlador.crearPartida(nombre);
         }
         mensaje.setText("Preparando partida...");
         mensaje.setForeground(TemaUI.VERDE_HOJA);
-        if (continuar != null) {
-            continuar.accept(!unirse);
-        }
     }
 }

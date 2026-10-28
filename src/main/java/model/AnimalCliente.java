@@ -6,6 +6,10 @@ public class AnimalCliente {
     private boolean esBot;
     private boolean esMio;
     private int energia;
+    private Integer idObjetivo;
+    private Double objetivoX;
+    private Double objetivoY;
+    private boolean atacando;
     private Punto posAnterior;
     private Punto posActual;
     private long tiempoAnterior;
@@ -45,6 +49,14 @@ public class AnimalCliente {
     public void setEsMio(boolean esMio) { this.esMio = esMio; }
     public int getEnergia() { return energia; }
     public void setEnergia(int energia) { this.energia = energia; }
+    public Integer getIdObjetivo() { return idObjetivo; }
+    public void setIdObjetivo(Integer idObjetivo) { this.idObjetivo = idObjetivo; }
+    public Double getObjetivoX() { return objetivoX; }
+    public void setObjetivoX(Double objetivoX) { this.objetivoX = objetivoX; }
+    public Double getObjetivoY() { return objetivoY; }
+    public void setObjetivoY(Double objetivoY) { this.objetivoY = objetivoY; }
+    public boolean isAtacando() { return atacando; }
+    public void setAtacando(boolean atacando) { this.atacando = atacando; }
     public Punto getPosActual() { return posActual; }
     public void setPosActual(Punto posActual) { this.posActual = posActual; }
 }

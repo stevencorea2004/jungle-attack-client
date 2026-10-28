@@ -100,6 +100,10 @@ public class ModeloJuego extends Observable {
         animal.setEsBot(vista.esBot);
         animal.setEsMio(vista.esMio);
         animal.setEnergia(vista.energia);
+        animal.setIdObjetivo(vista.idObjetivo);
+        animal.setObjetivoX(vista.objetivoX);
+        animal.setObjetivoY(vista.objetivoY);
+        animal.setAtacando(vista.atacando);
         animal.actualizarPos(new Punto(vista.x, vista.y), recibido);
         animales.put(vista.id, animal);
     }
@@ -128,6 +132,27 @@ public class ModeloJuego extends Observable {
 
     public void setResumen(ResumenPartida resumen) {
         this.resumen = resumen;
+        notifyObservers(this);
+    }
+
+    public void reiniciarPartida() {
+        codigoPartida = null;
+        miEspecie = null;
+        especieRival = null;
+        especiesDisponibles = null;
+        mapa = null;
+        zonaActual = 0;
+        zonasVisibles = new Vector<>();
+        animales.clear();
+        tazas = new Vector<>();
+        bandera = null;
+        colorBandera = null;
+        animalesVivos = 0;
+        danio = 0;
+        tazasConsumidas = 0;
+        botsEliminados = 0;
+        ultimoError = null;
+        resumen = null;
         notifyObservers(this);
     }
 
@@ -165,6 +190,7 @@ public class ModeloJuego extends Observable {
     public void setBotsEliminados(int botsEliminados) { this.botsEliminados = botsEliminados; }
     public String getUltimoError() { return ultimoError; }
     public void setUltimoError(String ultimoError) { this.ultimoError = ultimoError; notifyObservers(this); }
+    public void limpiarUltimoError() { ultimoError = null; }
     public ResumenPartida getResumen() { return resumen; }
     public void notificarCambio() { notifyObservers(this); }
 }

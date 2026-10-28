@@ -15,6 +15,7 @@ import model.ModeloJuego;
 public class PantallaSeleccion extends Pantalla {
     private final ControladorLobby controlador;
     private final Runnable continuar;
+    private final Runnable salir;
     private Especie seleccionada;
     private JLabel estado;
     private JPanel opciones;
@@ -23,9 +24,15 @@ public class PantallaSeleccion extends Pantalla {
     private final CacheSvg cache = CacheSvg.getInstancia();
 
     public PantallaSeleccion(ModeloJuego modelo, ControladorLobby controlador, Runnable continuar) {
+        this(modelo, controlador, continuar, () -> { });
+    }
+
+    public PantallaSeleccion(ModeloJuego modelo, ControladorLobby controlador,
+            Runnable continuar, Runnable salir) {
         super(modelo);
         this.controlador = controlador;
         this.continuar = continuar;
+        this.salir = salir;
         construir();
     }
 
@@ -72,6 +79,9 @@ public class PantallaSeleccion extends Pantalla {
         pie.setOpaque(false);
         pie.setBorder(BorderFactory.createEmptyBorder(0, 25, 20, 25));
         pie.add(estado, BorderLayout.CENTER);
+        JButton salir = TemaUI.boton("Salir de partida");
+        salir.addActionListener(e -> this.salir.run());
+        pie.add(salir, BorderLayout.WEST);
         pie.add(empezar, BorderLayout.EAST);
         add(pie, BorderLayout.SOUTH);
         cargarEspecies();
@@ -80,6 +90,10 @@ public class PantallaSeleccion extends Pantalla {
     @Override
     public void refrescar() {
         cargarEspecies();
+        if (estado != null && modelo != null && modelo.getUltimoError() != null) {
+            estado.setText(modelo.getUltimoError());
+            estado.setForeground(new java.awt.Color(166, 55, 44));
+        }
     }
 
     private void cargarEspecies() {

@@ -6,7 +6,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import model.ModeloJuego;
@@ -18,8 +17,10 @@ public class PantallaJuego extends Pantalla {
     private final Runnable salir;
     private PanelMapa panelMapa;
     private PanelMarcador marcador;
-    private JComboBox<Integer> selectorZona;
-    private boolean actualizandoZonas;
+    private JButton zonaAnterior;
+    private JButton zonaSiguiente;
+    private JLabel zonaLabel;
+    private JLabel estado;
 
     public PantallaJuego(ModeloJuego modelo, ControladorJuego controlador, Seleccion seleccion, Runnable salir) {
         super(modelo);
@@ -44,17 +45,18 @@ public class PantallaJuego extends Pantalla {
 
         JPanel acciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         acciones.setOpaque(false);
-        JLabel zonaLabel = TemaUI.etiqueta("Explorar zona:", Font.BOLD, 13f, TemaUI.CREMA);
-        selectorZona = new JComboBox<>();
-        selectorZona.addActionListener(e -> {
-            if (!actualizandoZonas && controlador != null && selectorZona.getSelectedItem() != null) {
-                controlador.verZona((Integer) selectorZona.getSelectedItem());
-            }
-        });
-        JButton menu = TemaUI.boton("Menu");
+        zonaAnterior = TemaUI.boton("← Región");
+        zonaAnterior.setName("regionAnterior");
+        zonaSiguiente = TemaUI.boton("Región →");
+        zonaSiguiente.setName("regionSiguiente");
+        zonaLabel = TemaUI.etiqueta("Región", Font.BOLD, 13f, TemaUI.CREMA);
+        zonaAnterior.addActionListener(e -> cambiarRegion(-1));
+        zonaSiguiente.addActionListener(e -> cambiarRegion(1));
+        JButton menu = TemaUI.boton("Salir de partida");
         menu.addActionListener(e -> salir.run());
+        acciones.add(zonaAnterior);
         acciones.add(zonaLabel);
-        acciones.add(selectorZona);
+        acciones.add(zonaSiguiente);
         acciones.add(menu);
         barra.add(acciones, BorderLayout.EAST);
         add(barra, BorderLayout.NORTH);
@@ -67,9 +69,9 @@ public class PantallaJuego extends Pantalla {
         centro.add(marcador, BorderLayout.EAST);
         add(centro, BorderLayout.CENTER);
 
-        JLabel ayuda = TemaUI.etiqueta("Arrastra para seleccionar varios animales  |  Clic en rival para atacar  |  Clic derecho para moverte",
+        estado = TemaUI.etiqueta("Arrastra para seleccionar animales | Clic en rival para atacar | Clic derecho para moverte",
                 Font.PLAIN, 12f, TemaUI.CREMA);
-        add(ayuda, BorderLayout.SOUTH);
+        add(estado, BorderLayout.SOUTH);
     }
 
     @Override
@@ -90,23 +92,46 @@ public class PantallaJuego extends Pantalla {
     }
 
     private void actualizarZonas() {
-        if (selectorZona == null || modelo == null) {
+        if (zonaLabel == null || modelo == null) {
             return;
         }
-        actualizandoZonas = true;
-        selectorZona.removeAllItems();
-        if (modelo.getZonasVisibles() != null) {
-            for (Integer idZona : modelo.getZonasVisibles()) {
-                if (idZona != null) {
-                    selectorZona.addItem(idZona);
-                }
+        java.util.Vector<Integer> zonas = zonasDelMapa();
+        int indice = zonas.indexOf(modelo.getZonaActual());
+        zonaLabel.setText(indice < 0 ? "Sin región"
+                : "Región " + modelo.getZonaActual() + " (" + (indice + 1) + "/" + zonas.size() + ")");
+        zonaAnterior.setEnabled(controlador != null && indice > 0);
+        zonaSiguiente.setEnabled(controlador != null && indice >= 0 && indice + 1 < zonas.size());
+        if (modelo.getUltimoError() != null && !modelo.getUltimoError().isBlank()) {
+            estado.setText(modelo.getUltimoError());
+            estado.setForeground(new java.awt.Color(255, 180, 160));
+        } else {
+            estado.setText("Arrastra para seleccionar animales | Clic en rival para atacar | Clic derecho para moverte");
+            estado.setForeground(TemaUI.CREMA);
+        }
+    }
+
+    private void cambiarRegion(int desplazamiento) {
+        if (controlador == null || modelo == null) {
+            return;
+        }
+        java.util.Vector<Integer> zonas = zonasDelMapa();
+        int destino = zonas.indexOf(modelo.getZonaActual()) + desplazamiento;
+        if (destino >= 0 && destino < zonas.size()) {
+            controlador.verZona(zonas.get(destino));
+        }
+    }
+
+    private java.util.Vector<Integer> zonasDelMapa() {
+        java.util.Vector<Integer> zonas = new java.util.Vector<>();
+        if (modelo == null || modelo.getMapa() == null || modelo.getMapa().zonas == null) {
+            return zonas;
+        }
+        for (red.VistaZona zona : modelo.getMapa().zonas) {
+            if (zona != null && !zonas.contains(zona.id)) {
+                zonas.add(zona.id);
             }
         }
-        if (modelo.getZonasVisibles() != null
-                && modelo.getZonasVisibles().contains(modelo.getZonaActual())) {
-            selectorZona.setSelectedItem(modelo.getZonaActual());
-        }
-        selectorZona.setEnabled(selectorZona.getItemCount() > 0);
-        actualizandoZonas = false;
+        java.util.Collections.sort(zonas);
+        return zonas;
     }
 }

@@ -49,7 +49,7 @@ Las clases de protocolo (TipoMensaje, Mensaje, CodificadorJson, FabricaMensajes 
 
 ### TipoMensaje (Enum)
 
-Valores: CREATE\_MATCH, JOIN\_MATCH, SELECT\_ANIMAL, MOVE\_ANIMALS, ATTACK, VIEW\_ZONE, MATCH\_CREATED, MATCH\_JOINED, ERROR, ANIMAL\_SELECTION, GAME\_STARTED, STATE\_UPDATE, GAME\_OVER
+Valores: CREATE\_MATCH, JOIN\_MATCH, SELECT\_ANIMAL, MOVE\_ANIMALS, ATTACK, VIEW\_ZONE, LEAVE\_MATCH, MATCH\_CREATED, MATCH\_JOINED, ERROR, ANIMAL\_SELECTION, GAME\_STARTED, STATE\_UPDATE, GAME\_OVER
 
 ### Mensaje
 
@@ -287,6 +287,7 @@ Métodos:
 - moverSeleccionados(Punto destino): void — Envía MOVE\_ANIMALS.
 - atacar(int idObjetivo): void — Envía ATTACK.
 - verZona(int idZona): void — Envía VIEW\_ZONE.
+- salirPartida(): void — Envía LEAVE\_MATCH para abandonar la partida y volver al lobby.
 
 ### MainControl
 
@@ -325,8 +326,10 @@ Métodos:
 - PantallaLobby: Pide el nickname y permite crear partida o unirse con código.
 - PantallaEspera: Muestra el código mientras llega el segundo jugador.
 - PantallaSeleccion: Las 7 especies; las tomadas salen deshabilitadas.
-- PantallaJuego: Contiene el PanelMapa y el PanelMarcador.
+- PantallaJuego: Contiene el PanelMapa y el PanelMarcador; muestra una región ampliada, permite recorrer todas las regiones con flechas y ofrece salir de la partida.
 - PantallaResumen: Muestra bots eliminados, animales perdidos, tazas y duración.
+
+Las regiones se recorren con los botones de navegación; los animales que cruzan una salida de camino hacia una zona vecina hacen que la vista los siga. Las regiones sin animales propios se muestran en escala de grises con el símbolo de niebla. Se puede salir desde espera, selección o juego.
 
 ### PanelMapa (Hereda de JPanel)
 

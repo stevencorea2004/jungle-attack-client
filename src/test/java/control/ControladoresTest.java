@@ -64,6 +64,8 @@ class ControladoresTest {
         controlador.verZona(5);
         assertEquals(TipoMensaje.VIEW_ZONE, conexion.ultimo.getTipo());
         assertEquals(5, ((DatosVerZona) conexion.ultimo.getPayload(DatosVerZona.class)).idZona);
+        controlador.salirPartida();
+        assertEquals(TipoMensaje.LEAVE_MATCH, conexion.ultimo.getTipo());
         assertNotNull(conexion.ultimo);
     }
 

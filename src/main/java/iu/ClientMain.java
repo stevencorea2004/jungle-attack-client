@@ -22,6 +22,7 @@ public final class ClientMain {
         imagenes.add("svg/taza_cafe.svg");
         imagenes.add("svg/bandera_azul.svg");
         imagenes.add("svg/bandera_roja.svg");
+        imagenes.add("svg/niebla.svg");
         CacheSvg.getInstancia().precargar(imagenes);
         SwingUtilities.invokeLater(() -> {
             ModeloJuego modelo = new ModeloJuego();
@@ -30,11 +31,10 @@ public final class ClientMain {
             try {
                 conexion.conectar(Constantes.HOST, Constantes.PUERTO);
             } catch (UncheckedIOException e) {
-                javax.swing.JOptionPane.showMessageDialog(null,
+                DialogoError.mostrar(null,
                         "No se pudo conectar al servidor en " + Constantes.HOST + ":"
                                 + Constantes.PUERTO + ". Inicia el servidor y vuelve a abrir el cliente.\n"
-                                + e.getMessage(),
-                        "Servidor no disponible", javax.swing.JOptionPane.ERROR_MESSAGE);
+                                + e.getMessage());
                 return;
             }
             ControladorLobby lobby = new ControladorLobby(conexion, modelo);

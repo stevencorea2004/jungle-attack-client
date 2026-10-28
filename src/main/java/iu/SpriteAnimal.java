@@ -2,6 +2,8 @@ package iu;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import model.AnimalCliente;
 import model.Punto;
@@ -11,10 +13,16 @@ import util.Constantes;
 public class SpriteAnimal extends Sprite {
     private final AnimalCliente animal;
     private final Seleccion seleccion;
+    private final boolean bajoCursor;
 
     public SpriteAnimal(AnimalCliente animal, Seleccion seleccion) {
+        this(animal, seleccion, false);
+    }
+
+    public SpriteAnimal(AnimalCliente animal, Seleccion seleccion, boolean bajoCursor) {
         this.animal = animal;
         this.seleccion = seleccion;
+        this.bajoCursor = bajoCursor;
         this.cache = CacheSvg.getInstancia();
     }
 
@@ -30,6 +38,15 @@ public class SpriteAnimal extends Sprite {
         if (marcada) {
             g2.setColor(Constantes.COLOR_SELECCION);
             g2.fillOval(x - 24, y - 24, 48, 48);
+        }
+        if (bajoCursor) {
+            Color colorAnterior = g2.getColor();
+            java.awt.Stroke trazoAnterior = g2.getStroke();
+            g2.setColor(new Color(45, 145, 255, 235));
+            g2.setStroke(new BasicStroke(3f));
+            g2.drawOval(x - 27, y - 27, 54, 54);
+            g2.setStroke(trazoAnterior);
+            g2.setColor(colorAnterior);
         }
 
         BufferedImage imagen = animal.getEspecie() == null ? null : cache.getImagen(animal.getEspecie().getRutaSvg());

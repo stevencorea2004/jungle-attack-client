@@ -1,15 +1,6 @@
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-red\RedClientTest.class
-=======
->>>>>>> 17e7875485b078132fc66f86b141ae5a9c924881
 iu\UiRenderingTest.class
 model\ClientModelTest.class
 control\ControladoresTest.class
+iu\UiRenderingTest$FakeConexion.class
 control\ControladoresTest$FakeConexion.class
-<<<<<<< HEAD
 red\RedClientTest.class
-=======
->>>>>>> 08a9ee895a38774417a0090a35ca1bf4d63eebee
->>>>>>> 17e7875485b078132fc66f86b141ae5a9c924881

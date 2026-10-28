@@ -51,4 +51,10 @@ public class ControladorJuego {
         payload.idZona = idZona;
         conexion.enviar(FabricaMensajes.crear(TipoMensaje.VIEW_ZONE, payload));
     }
+
+    public void salirPartida() {
+        if (conexion != null) {
+            conexion.enviar(FabricaMensajes.crear(TipoMensaje.LEAVE_MATCH, null));
+        }
+    }
 }

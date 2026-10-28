@@ -9,10 +9,16 @@ import model.ModeloJuego;
 public class PantallaEspera extends Pantalla {
     private JLabel codigo;
     private final Runnable continuar;
+    private final Runnable salir;
 
     public PantallaEspera(ModeloJuego modelo, Runnable continuar) {
+        this(modelo, continuar, () -> { });
+    }
+
+    public PantallaEspera(ModeloJuego modelo, Runnable continuar, Runnable salir) {
         super(modelo);
         this.continuar = continuar;
+        this.salir = salir;
         construir();
     }
 
@@ -22,8 +28,9 @@ public class PantallaEspera extends Pantalla {
         setOpaque(true);
         setBackground(TemaUI.VERDE_NOCHE);
         JPanel tarjeta = TemaUI.tarjeta();
+        tarjeta.setName("tarjetaEspera");
         tarjeta.setLayout(new javax.swing.BoxLayout(tarjeta, javax.swing.BoxLayout.Y_AXIS));
-        tarjeta.setPreferredSize(new java.awt.Dimension(480, 380));
+        tarjeta.setPreferredSize(new java.awt.Dimension(480, 440));
 
         JLabel icono = TemaUI.etiqueta("♧", Font.BOLD, 60f, TemaUI.VERDE_HOJA);
         JLabel titulo = TemaUI.etiqueta("Partida creada", Font.BOLD, 30f, TemaUI.VERDE_NOCHE);
@@ -33,16 +40,27 @@ public class PantallaEspera extends Pantalla {
         for (JLabel label : new JLabel[] {icono, titulo, texto, codigo}) {
             label.setAlignmentX(CENTER_ALIGNMENT);
             tarjeta.add(label);
-            tarjeta.add(javax.swing.Box.createVerticalStrut(12));
+            tarjeta.add(javax.swing.Box.createVerticalStrut(6));
         }
         JLabel espera = TemaUI.etiqueta("Esperando que se una el segundo jugador...", Font.PLAIN, 13f, TemaUI.TEXTO);
         espera.setAlignmentX(CENTER_ALIGNMENT);
         tarjeta.add(espera);
-        tarjeta.add(javax.swing.Box.createVerticalStrut(22));
+        tarjeta.add(javax.swing.Box.createVerticalStrut(10));
         javax.swing.JButton continuar = TemaUI.boton("Continuar a seleccion");
+        continuar.setName("continuarSeleccion");
         continuar.setAlignmentX(CENTER_ALIGNMENT);
+        continuar.setPreferredSize(new java.awt.Dimension(300, 44));
+        continuar.setMaximumSize(new java.awt.Dimension(300, 44));
         continuar.addActionListener(e -> this.continuar.run());
         tarjeta.add(continuar);
+        tarjeta.add(javax.swing.Box.createVerticalStrut(8));
+        javax.swing.JButton salir = TemaUI.boton("Salir de partida");
+        salir.setName("salirPartida");
+        salir.setAlignmentX(CENTER_ALIGNMENT);
+        salir.setPreferredSize(new java.awt.Dimension(300, 44));
+        salir.setMaximumSize(new java.awt.Dimension(300, 44));
+        salir.addActionListener(e -> this.salir.run());
+        tarjeta.add(salir);
 
         JPanel wrapper = new JPanel(new java.awt.GridBagLayout());
         wrapper.setOpaque(false);

@@ -28,9 +28,15 @@ public class ControladorMouse extends MouseAdapter {
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        panel.actualizarAnimalBajoCursor(e.getPoint());
         if (inicioArrastre != null && (e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0) {
             panel.setSeleccionVisual(inicioArrastre, e.getPoint());
         }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        panel.actualizarAnimalBajoCursor(e.getPoint());
     }
 
     @Override

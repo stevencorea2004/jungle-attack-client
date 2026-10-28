@@ -44,6 +44,25 @@ class ClientModelTest {
     }
 
     @Test
+    void appliesAttackTargetAndCombatStateFromSnapshot() {
+        ModeloJuego modelo = new ModeloJuego();
+        EstadoVisible estado = estadoConAnimal(6, 10, 20, true);
+        VistaAnimal vista = estado.animales.firstElement();
+        vista.idObjetivo = 9;
+        vista.objetivoX = 40.0;
+        vista.objetivoY = 50.0;
+        vista.atacando = true;
+
+        modelo.aplicarEstado(estado, 1_000L);
+
+        AnimalCliente animal = modelo.getAnimales().get(6);
+        assertEquals(9, animal.getIdObjetivo());
+        assertEquals(40.0, animal.getObjetivoX());
+        assertEquals(50.0, animal.getObjetivoY());
+        assertTrue(animal.isAtacando());
+    }
+
+    @Test
     void selectsAnimalsWithinRectangleAndTogglesSelection() {
         AnimalCliente animal = new AnimalCliente();
         animal.setId(12);
