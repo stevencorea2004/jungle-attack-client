@@ -1,14 +1,16 @@
 package iu;
 
-import control.ControladorLobby;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.util.Vector;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import control.ControladorLobby;
 import model.Especie;
 import model.ModeloJuego;
 
