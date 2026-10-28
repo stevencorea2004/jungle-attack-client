@@ -21,6 +21,7 @@ public class PantallaSeleccion extends Pantalla {
     private JPanel filaSuperior;
     private JPanel filaInferior;
     private final CacheSvg cache = CacheSvg.getInstancia();
+    private boolean seleccionPendiente;
 
     public PantallaSeleccion(ModeloJuego modelo, ControladorLobby controlador, Runnable continuar) {
         super(modelo);
@@ -54,19 +55,27 @@ public class PantallaSeleccion extends Pantalla {
         opciones.add(filaInferior);
         add(opciones, BorderLayout.CENTER);
         estado = TemaUI.etiqueta("Selecciona una especie para continuar", Font.PLAIN, 14f, TemaUI.CREMA);
+        estado.setName("estadoSeleccion");
         JButton empezar = TemaUI.boton("Entrar al bosque");
+        empezar.setName("entrarAlBosque");
         empezar.addActionListener(e -> {
+            if (seleccionPendiente) {
+                return;
+            }
             if (seleccionada == null) {
                 estado.setText("Primero elige una especie");
                 return;
             }
             if (modelo != null) {
+                modelo.setUltimoError(null);
                 modelo.setMiEspecie(seleccionada);
             }
+            seleccionPendiente = true;
+            estado.setText("Confirmando especie...");
             if (controlador != null) {
                 controlador.elegirEspecie(seleccionada);
             }
-            continuar.run();
+            repaint();
         });
         JPanel pie = new JPanel(new BorderLayout(14, 0));
         pie.setOpaque(false);
@@ -79,6 +88,40 @@ public class PantallaSeleccion extends Pantalla {
 
     @Override
     public void refrescar() {
+        if (modelo != null && estado != null) {
+            if (seleccionPendiente && modelo.getUltimoError() != null) {
+                seleccionPendiente = false;
+                seleccionada = null;
+                modelo.setMiEspecie(null);
+                estado.setText(modelo.getUltimoError());
+                estado.setForeground(new java.awt.Color(166, 55, 44));
+                cargarEspecies();
+                return;
+            }
+
+            Especie especieRival = modelo.getEspecieRival();
+            Especie miEspecie = modelo.getMiEspecie();
+            Vector<Especie> disponibles = modelo.getEspeciesDisponibles();
+            if (seleccionPendiente && miEspecie != null && disponibles != null
+                    && !disponibles.contains(miEspecie) && miEspecie != especieRival) {
+                seleccionPendiente = false;
+                if (continuar != null) {
+                    continuar.run();
+                }
+                return;
+            }
+            if (especieRival != null) {
+                if (seleccionada == especieRival) {
+                    seleccionada = null;
+                }
+                estado.setText("El rival eligio " + especieRival.getNombre()
+                        + ". Selecciona otra especie.");
+                estado.setForeground(new java.awt.Color(166, 55, 44));
+            } else if (modelo.getUltimoError() != null) {
+                estado.setText(modelo.getUltimoError());
+                estado.setForeground(new java.awt.Color(166, 55, 44));
+            }
+        }
         cargarEspecies();
     }
 
@@ -89,9 +132,11 @@ public class PantallaSeleccion extends Pantalla {
         filaSuperior.removeAll();
         filaInferior.removeAll();
         Vector<Especie> disponibles = modelo == null ? null : modelo.getEspeciesDisponibles();
+        Especie especieRival = modelo == null ? null : modelo.getEspecieRival();
         int indice = 0;
         for (Especie especie : Especie.values()) {
-            boolean libre = disponibles == null || disponibles.contains(especie) || especie == seleccionada;
+            boolean libre = !seleccionPendiente && especie != especieRival
+                    && (disponibles == null || disponibles.contains(especie) || especie == seleccionada);
             JButton opcion = new JButton("<html><center>" + especie.getNombre() + "</center></html>");
             opcion.setName("especie-" + especie.name());
             opcion.setVerticalTextPosition(JButton.BOTTOM);
@@ -117,7 +162,10 @@ public class PantallaSeleccion extends Pantalla {
             }
             opcion.addActionListener(e -> {
                 seleccionada = especie;
-                estado.setText(especie.getNombre() + " seleccionado");
+                estado.setText(especieRival == null
+                        ? especie.getNombre() + " seleccionado"
+                        : "Rival: " + especieRival.getNombre() + " | " + especie.getNombre() + " seleccionado");
+                estado.setForeground(TemaUI.CREMA);
                 cargarEspecies();
             });
             if (indice < 3) {
