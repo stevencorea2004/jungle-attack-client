@@ -1,4 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: red.RedClientTest
 -------------------------------------------------------------------------------
+<<<<<<< HEAD
 Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.030 s -- in red.RedClientTest
+=======
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.035 s -- in red.RedClientTest
+>>>>>>> 00f312ba43552de5b991b5295a0bd793baf13646
