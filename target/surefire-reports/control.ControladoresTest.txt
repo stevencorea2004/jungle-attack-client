@@ -1,8 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: control.ControladoresTest
 -------------------------------------------------------------------------------
-<<<<<<< HEAD
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.093 s -- in control.ControladoresTest
-=======
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.148 s -- in control.ControladoresTest
->>>>>>> 8851165466300cfe2a4689bd98e5aa852d528361
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.103 s -- in control.ControladoresTest

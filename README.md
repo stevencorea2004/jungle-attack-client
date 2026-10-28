@@ -237,6 +237,19 @@ Métodos:
 - actualizarPos(Punto p, long tiempo): void — Conserva las muestras necesarias para el búfer y descarta snapshots antiguos.
 - posInterpolada(long ahora): Punto — Interpola entre muestras con 100 ms de búfer para suavizar el movimiento.
 
+### MuestraPosicion (clase privada de apoyo)
+
+Representa un snapshot temporal del movimiento de un animal para interpolar la posición en pantalla.
+
+Atributos:
+
+- posicion: Punto
+- tiempo: long
+
+Métodos:
+
+- constructor(Punto posicion, long tiempo): void — Guarda la ubicación y el instante del muestreo.
+
 ### Seleccion
 
 Atributos:
@@ -254,6 +267,10 @@ Métodos:
 ### MainModel
 
 Prueba unitaria independiente para verificar que aplicarEstado notifique a los observadores, la selección múltiple y la interpolación.
+
+### ContadorObserver (helper privado de MainModel)
+
+Observador de prueba que cuenta cuántas veces `ModeloJuego` notifica a sus escuchas, útil para validar el patrón Observer.
 
 ## 3. Control Layer (control)
 
@@ -289,6 +306,10 @@ Métodos:
 ### MainControl
 
 Prueba unitaria independiente con una conexión simulada para verificar que se envíen los mensajes correctos.
+
+### FakeConexion (test double en MainControl)
+
+Subclase de `ConexionServidor` usada únicamente en la prueba de control. Guarda el último `Mensaje` enviado para comprobar el protocolo más fácilmente.
 
 ## 4. UI Layer (iu)
 
@@ -372,6 +393,40 @@ Métodos:
 
 - paintComponent(Graphics g): void — Dibuja el daño actual, tazas, bots eliminados y zonas con animales.
 
+### PanelMinimapa (Hereda de JPanel)
+
+Resumen gráfico del mapa completo; resalta zonas exploradas, aplica la niebla a las no visitadas y permite hacer clic para cambiar la zona actual.
+
+Atributos:
+
+- modelo: ModeloJuego
+- seleccion: Seleccion
+- seleccionarZona: IntConsumer
+
+Métodos:
+
+- paintComponent(Graphics g): void — Redibuja la red de zonas con colores de exploración y cantidad de animales por región.
+- zonaEn(Point punto): int — Devuelve el id de la zona bajo el clic del usuario.
+
+### TemaUI (Clase final con factories)
+
+Centraliza la identidad visual del juego.
+
+Métodos:
+
+- fondo(): JPanel — Crea el fondo degradado del menú y pantallas.
+- boton(String texto): JButton — Ajusta estilo, color y cursor para los botones.
+- etiqueta(String texto, int estilo, float tamano, Color color): JLabel — Genera etiquetas consistentes.
+- tarjeta(): JPanel — Crea contenedores con borde y fondo de tarjeta.
+
+### DialogoError (helper de la UI)
+
+Muestra un modal con el mensaje del error de conexión o del protocolo para no romper la experiencia.
+
+Métodos:
+
+- mostrar(Component padre, String mensaje): void — Crea un `JDialog` modal con detalle del problema.
+
 ### CacheSvg — Patrón Singleton
 
 Atributos:
@@ -384,6 +439,15 @@ Métodos:
 - getInstancia(): CacheSvg (estático)
 - precargar(Vector rutas): void — Rasteriza cada SVG una sola vez al iniciar.
 - getImagen(String ruta): BufferedImage
+
+### BufferedImageTranscoder (clase privada de CacheSvg)
+
+Adaptador interno que convierte un SVG a `BufferedImage` con Batik para reutilizar la caché del cliente.
+
+Métodos:
+
+- createImage(int width, int height): BufferedImage — Crea el canvas de rasterizado.
+- writeImage(BufferedImage image, TranscoderOutput output): void — Guarda la imagen final.
 
 ### ControladorMouse (Hereda de MouseAdapter)
 
@@ -671,6 +735,10 @@ classDiagram
         +actualizarPos(p: Punto, tiempo: long): void
         +posInterpolada(ahora: long): Punto
         }
+        class MuestraPosicion {
+        -posicion: Punto
+        -tiempo: long
+        }
         class Seleccion {
         -seleccionados: Set
         +seleccionar(id: int): void
@@ -678,6 +746,10 @@ classDiagram
         +seleccionarEnRectangulo(animales: Vector, area: Rectangle): void
         +limpiar(): void
         +estaSeleccionado(id: int): boolean
+        }
+        class ContadorObserver {
+        -count: int
+        +update(source: Object, ob: Observable): void
         }
         class MainModel {
         +main(args: String[]): void$
@@ -698,6 +770,10 @@ classDiagram
         +moverSeleccionados(destino: Punto): void
         +atacar(idObjetivo: int): void
         +verZona(idZona: int): void
+        }
+        class FakeConexion {
+        -ultimo: Mensaje
+        +enviar(mensaje: Mensaje): void
         }
         class MainControl {
         +main(args: String[]): void$
@@ -752,12 +828,33 @@ classDiagram
         class PanelMarcador {
         +paintComponent(g: Graphics): void
         }
+        class PanelMinimapa {
+        -modelo: ModeloJuego
+        -seleccion: Seleccion
+        -seleccionarZona: IntConsumer
+        +paintComponent(g: Graphics): void
+        +zonaEn(punto: Point): int
+        }
+        class TemaUI {
+        +fondo(): JPanel$
+        +boton(texto: String): JButton$
+        +etiqueta(texto: String, estilo: int, tamano: float, color: Color): JLabel$
+        +tarjeta(): JPanel$
+        }
+        class DialogoError {
+        +mostrar(padre: Component, mensaje: String): void$
+        }
         class CacheSvg {
         - instancia: CacheSvg$
         -imagenes: Map
         +getInstancia(): CacheSvg$
         +precargar(rutas: Vector): void
         +getImagen(ruta: String): BufferedImage
+        }
+        class BufferedImageTranscoder {
+        -imagen: BufferedImage
+        +createImage(width: int, height: int): BufferedImage
+        +writeImage(image: BufferedImage, output: TranscoderOutput): void
         }
         class ControladorMouse {
         -controlador: ControladorJuego
@@ -843,10 +940,16 @@ classDiagram
     Pantalla --> ModeloJuego
     PantallaJuego *-- PanelMapa
     PantallaJuego *-- PanelMarcador
+    PantallaJuego *-- PanelMinimapa
     PanelMapa --> ModeloJuego
     PanelMapa --> Seleccion
     PanelMarcador --> ModeloJuego
+    PanelMinimapa --> ModeloJuego
+    PanelMinimapa --> Seleccion
+    TemaUI ..> JPanel
+    DialogoError --> TemaUI
     Sprite --> CacheSvg
+    CacheSvg *-- BufferedImageTranscoder
     ControladorMouse --> ControladorJuego
     ControladorMouse --> PanelMapa
     MainIU ..> CacheSvg

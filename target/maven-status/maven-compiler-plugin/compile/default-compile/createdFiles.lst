@@ -1,8 +1,10 @@
+iu\PanelMarcador$1.class
 iu\PanelMinimapa.class
 iu\DialogoError.class
 iu\CacheSvg$BufferedImageTranscoder.class
 iu\SpriteTaza.class
 red\ManejadorError.class
+iu\PanelMinimapa$1.class
 model\ModeloJuego.class
 iu\TemaUI.class
 red\ConexionServidor.class

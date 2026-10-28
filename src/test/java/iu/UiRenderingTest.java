@@ -26,6 +26,7 @@ import model.ModeloJuego;
 import model.Punto;
 import model.Seleccion;
 import red.ConexionServidor;
+import red.DatosMover;
 import red.DatosVerZona;
 import red.DatosInicio;
 import red.EstadoVisible;
@@ -71,6 +72,27 @@ class UiRenderingTest {
         render(juego);
         juego.detenerAnimacion();
         render(new PantallaResumen(modelo, () -> { }));
+    }
+
+    @Test
+    void healthBarsUseEachAnimalTypeMaximumEnergy() {
+        AnimalCliente jugador = new AnimalCliente();
+        jugador.setEnergia(10);
+        jugador.setPosActual(new Punto(50, 50));
+        AnimalCliente bot = new AnimalCliente();
+        bot.setEsBot(true);
+        bot.setEnergia(10);
+        bot.setPosActual(new Punto(50, 50));
+
+        BufferedImage barraJugador = renderAnimal(jugador);
+        BufferedImage barraBot = renderAnimal(bot);
+        int puntoMitadBarra = barraJugador.getRGB(45, 73);
+        int puntoFinalBarra = barraJugador.getRGB(55, 73);
+
+        assertEquals(new Color(106, 191, 93).getRGB(), barraBot.getRGB(55, 73));
+        assertEquals(new Color(106, 191, 93).getRGB(), puntoMitadBarra);
+        assertTrue(new Color(puntoFinalBarra, true).getRed() < 50,
+                "La barra del jugador debe quedar a la mitad con 10 de 20 de energía");
     }
 
     @Test
@@ -136,6 +158,25 @@ class UiRenderingTest {
                 350, 350, 1, false, java.awt.event.MouseEvent.BUTTON1));
 
         assertEquals(java.util.Set.of(1), seleccion.getSeleccionados());
+        panel.detenerAnimacion();
+    }
+
+    @Test
+    void clickingRivalClearsSelectionOfAnimalThatDiedBeforeAttack() {
+        ModeloJuego modelo = new ModeloJuego();
+        AnimalCliente rival = animal(3, false, 20, 300, 300);
+        modelo.setAnimales(java.util.Map.of(rival.getId(), rival));
+        Seleccion seleccion = new Seleccion();
+        seleccion.seleccionar(2);
+        FakeConexion conexion = new FakeConexion();
+        PanelMapa panel = new PanelMapa(modelo, seleccion,
+                new ControladorJuego(conexion, seleccion));
+        panel.setSize(1280, 720);
+
+        clickMapa(panel, 300, 300);
+
+        assertTrue(seleccion.getSeleccionados().isEmpty());
+        assertEquals(null, conexion.ultimo);
         panel.detenerAnimacion();
     }
 
@@ -275,6 +316,88 @@ class UiRenderingTest {
 
         assertEquals(TipoMensaje.VIEW_ZONE, conexion.ultimo.getTipo());
         assertEquals(2, ((DatosVerZona) conexion.ultimo.getPayload(DatosVerZona.class)).idZona);
+        panel.detenerAnimacion();
+    }
+
+    @Test
+    void selectedAnimalMarkerRemainsVisibleOnMinimapFromAnotherRegion() {
+        ModeloJuego modelo = new ModeloJuego();
+        VistaMapa mapa = new VistaMapa();
+        VistaZona primera = new VistaZona();
+        primera.id = 1;
+        primera.ancho = 320;
+        primera.alto = 240;
+        VistaZona segunda = new VistaZona();
+        segunda.id = 2;
+        segunda.x = 320;
+        segunda.ancho = 320;
+        segunda.alto = 240;
+        mapa.zonas = new Vector<>(List.of(primera, segunda));
+        modelo.setMapa(mapa);
+        modelo.setZonaActual(2);
+        modelo.setZonasVisibles(new Vector<>(List.of(1)));
+        AnimalCliente animal = animal(17, true, 20, 400, 120);
+        modelo.setAnimales(java.util.Map.of(17, animal));
+        Seleccion seleccion = new Seleccion();
+        seleccion.seleccionar(17);
+
+        PanelMinimapa minimapa = new PanelMinimapa(modelo, seleccion, null);
+        minimapa.setSize(220, 150);
+        BufferedImage canvas = new BufferedImage(220, 150, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = canvas.createGraphics();
+        minimapa.paint(graphics);
+        graphics.dispose();
+
+        assertEquals(TemaUI.ORO.getRGB(), canvas.getRGB(136, 81));
+    }
+
+    @Test
+    void movingSelectedAnimalsFromAnotherRegionKeepsTheSelection() {
+        ModeloJuego modelo = new ModeloJuego();
+        VistaMapa mapa = new VistaMapa();
+        VistaZona primera = new VistaZona();
+        primera.id = 1;
+        primera.ancho = 320;
+        primera.alto = 240;
+        VistaZona segunda = new VistaZona();
+        segunda.id = 2;
+        segunda.x = 320;
+        segunda.ancho = 320;
+        segunda.alto = 240;
+        mapa.zonas = new Vector<>(List.of(primera, segunda));
+        modelo.setMapa(mapa);
+        EstadoVisible estadoOtraRegion = new EstadoVisible();
+        estadoOtraRegion.idZona = 2;
+        VistaAnimal vistaPropia = new VistaAnimal();
+        vistaPropia.id = 17;
+        vistaPropia.esMio = true;
+        vistaPropia.energia = 20;
+        vistaPropia.x = 100;
+        vistaPropia.y = 100;
+        estadoOtraRegion.animales = new Vector<>(List.of(vistaPropia));
+        estadoOtraRegion.zonasVisibles = new Vector<>(List.of(1));
+        modelo.aplicarEstado(estadoOtraRegion, 1_000L);
+
+        Seleccion seleccion = new Seleccion();
+        seleccion.seleccionar(17);
+        FakeConexion conexion = new FakeConexion();
+        PanelMapa panel = new PanelMapa(modelo, seleccion,
+                new ControladorJuego(conexion, seleccion));
+        panel.setSize(800, 500);
+
+        panel.dispatchEvent(new java.awt.event.MouseEvent(panel,
+                java.awt.event.MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0,
+                400, 250, 1, false, java.awt.event.MouseEvent.BUTTON3));
+        panel.dispatchEvent(new java.awt.event.MouseEvent(panel,
+                java.awt.event.MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0,
+                400, 250, 1, false, java.awt.event.MouseEvent.BUTTON3));
+
+        assertTrue(seleccion.estaSeleccionado(17));
+        assertEquals(TipoMensaje.MOVE_ANIMALS, conexion.ultimo.getTipo());
+        DatosMover mover = (DatosMover) conexion.ultimo.getPayload(DatosMover.class);
+        assertEquals(List.of(17), mover.idsAnimales);
+        assertEquals(480.0, mover.destinoX);
+        assertEquals(120.0, mover.destinoY);
         panel.detenerAnimacion();
     }
 
@@ -644,6 +767,14 @@ class UiRenderingTest {
             }
         }
         assertTrue(pintado, panel.getClass().getSimpleName() + " no dibujo contenido");
+    }
+
+    private static BufferedImage renderAnimal(AnimalCliente animal) {
+        BufferedImage canvas = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = canvas.createGraphics();
+        new SpriteAnimal(animal, null).dibujar(graphics, 0L);
+        graphics.dispose();
+        return canvas;
     }
 
     private void layoutRecursivamente(Container contenedor) {

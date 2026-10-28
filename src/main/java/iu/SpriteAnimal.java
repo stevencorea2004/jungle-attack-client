@@ -62,11 +62,16 @@ public class SpriteAnimal extends Sprite {
             g2.fillOval(x - 15, y - 15, 30, 30);
         }
 
-        int energia = Math.max(0, Math.min(Constantes.ENERGIA_MAX_JUGADOR, animal.getEnergia()));
+        int energiaMaxima = animal.isEsBot() ? Constantes.ENERGIA_BOT : Constantes.ENERGIA_MAX_JUGADOR;
+        int energia = Math.max(0, Math.min(energiaMaxima, animal.getEnergia()));
+        int anchoBarra = 40;
+        int anchoEnergia = (int) Math.round(anchoBarra * (double) energia / energiaMaxima);
         g2.setColor(new java.awt.Color(20, 35, 25, 190));
-        g2.fillRoundRect(x - 20, y + 20, 40, Constantes.ALTO_BARRA_ENERGIA, 4, 4);
-        g2.setColor(energia > 5 ? new java.awt.Color(106, 191, 93) : new java.awt.Color(221, 80, 62));
-        g2.fillRoundRect(x - 20, y + 20, energia * 2, Constantes.ALTO_BARRA_ENERGIA, 4, 4);
+        g2.fillRoundRect(x - 20, y + 20, anchoBarra, Constantes.ALTO_BARRA_ENERGIA, 4, 4);
+        double proporcionEnergia = (double) energia / energiaMaxima;
+        g2.setColor(proporcionEnergia > 0.25
+                ? new java.awt.Color(106, 191, 93) : new java.awt.Color(221, 80, 62));
+        g2.fillRoundRect(x - 20, y + 20, anchoEnergia, Constantes.ALTO_BARRA_ENERGIA, 4, 4);
         g2.setFont(g2.getFont().deriveFont(java.awt.Font.BOLD, 10f));
         g2.setColor(java.awt.Color.WHITE);
         String nombre = animal.getEspecie() == null ? "Animal" : animal.getEspecie().getNombre();

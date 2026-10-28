@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.IntConsumer;
 import javax.swing.JPanel;
+import model.AnimalCliente;
 import model.ModeloJuego;
+import model.Seleccion;
 import red.VistaCamino;
 import red.VistaMapa;
 import red.VistaZona;
@@ -25,14 +27,20 @@ final class PanelMinimapa extends JPanel {
     private static final Color ZONA_EXPLORADA = new Color(64, 117, 70);
     private static final Color ZONA_NUBLADA = new Color(95, 98, 97);
     private final ModeloJuego modelo;
+    private final Seleccion seleccion;
     private final IntConsumer seleccionarZona;
 
     PanelMinimapa(ModeloJuego modelo) {
-        this(modelo, null);
+        this(modelo, null, null);
     }
 
     PanelMinimapa(ModeloJuego modelo, IntConsumer seleccionarZona) {
+        this(modelo, null, seleccionarZona);
+    }
+
+    PanelMinimapa(ModeloJuego modelo, Seleccion seleccion, IntConsumer seleccionarZona) {
         this.modelo = modelo;
+        this.seleccion = seleccion;
         this.seleccionarZona = seleccionarZona;
         setName("minimapa");
         setOpaque(false);
@@ -106,6 +114,7 @@ final class PanelMinimapa extends JPanel {
                 g.draw(rectangulo);
             }
         }
+        dibujarAnimalesSeleccionados(g, limites);
         g.dispose();
     }
 
@@ -160,6 +169,31 @@ final class PanelMinimapa extends JPanel {
         float textoY = (float) (rectangulo.getCenterY()
                 + (metricas.getAscent() - metricas.getDescent()) / 2.0);
         g.drawString(texto, textoX, textoY);
+    }
+
+    private void dibujarAnimalesSeleccionados(Graphics2D g, Rectangle2D limites) {
+        if (seleccion == null || modelo == null || getWidth() <= 0 || getHeight() <= 0) {
+            return;
+        }
+        int margen = 8;
+        int tituloAlto = 20;
+        double ancho = Math.max(1, getWidth() - margen * 2);
+        double alto = Math.max(1, getHeight() - tituloAlto - margen);
+        for (Integer id : seleccion.getSeleccionados()) {
+            AnimalCliente animal = modelo.getAnimales().get(id);
+            if (animal == null || !animal.isEsMio() || animal.getEnergia() <= 0) {
+                continue;
+            }
+            model.Punto posicion = animal.getPosActual();
+            int x = (int) Math.round(margen
+                    + (posicion.getX() - limites.getX()) * ancho / limites.getWidth());
+            int y = (int) Math.round(tituloAlto
+                    + (posicion.getY() - limites.getY()) * alto / limites.getHeight());
+            g.setColor(new Color(15, 34, 28, 230));
+            g.fillOval(x - 6, y - 6, 12, 12);
+            g.setColor(TemaUI.ORO);
+            g.fillOval(x - 4, y - 4, 8, 8);
+        }
     }
 
     private static void dibujarConexiones(Graphics2D g, VistaMapa mapa,

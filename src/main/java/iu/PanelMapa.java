@@ -41,7 +41,7 @@ import java.awt.Graphics;
             this.modelo = modelo;
             this.seleccion = seleccion;
             this.controladorMouse = new ControladorMouse(controlador, this);
-            this.minimapa = new PanelMinimapa(modelo,
+            this.minimapa = new PanelMinimapa(modelo, seleccion,
                     idZona -> {
                         if (controlador != null) {
                             controlador.verZona(idZona);
@@ -386,7 +386,6 @@ import java.awt.Graphics;
             for (VistaCamino camino : mapa.caminos) {
                 dibujarCamino(g2, camino);
             }
-
             if (mapa.zonas != null) {
                 g2.setColor(new Color(232, 220, 169, 80));
                 g2.setStroke(new BasicStroke(1f * escala, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
