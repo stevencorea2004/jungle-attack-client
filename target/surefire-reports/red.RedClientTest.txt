@@ -1,20 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: red.RedClientTest
 -------------------------------------------------------------------------------
-<<<<<<< HEAD
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.067 s -- in red.RedClientTest
-=======
-<<<<<<< HEAD
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.044 s -- in red.RedClientTest
-=======
-<<<<<<< HEAD
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.046 s -- in red.RedClientTest
-=======
-<<<<<<< HEAD
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.090 s -- in red.RedClientTest
-=======
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.082 s -- in red.RedClientTest
->>>>>>> 08a9ee895a38774417a0090a35ca1bf4d63eebee
->>>>>>> 17e7875485b078132fc66f86b141ae5a9c924881
->>>>>>> c473f125a0a5455564326bfc0c0cefed120de0ab
->>>>>>> 1d2a6720f00e1fe062bdf3a890f8860d88bdd3e6
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.030 s -- in red.RedClientTest

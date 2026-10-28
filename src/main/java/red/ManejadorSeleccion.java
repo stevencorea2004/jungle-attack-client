@@ -25,6 +25,7 @@ public class ManejadorSeleccion implements IManejadorMensaje {
                 datos.disponibles == null ? new Vector<>() : new Vector<>(datos.disponibles);
         modelo.setEspeciesDisponibles(disponibles);
         modelo.setEspecieRival(datos.eleccionRival);
+        modelo.setSeleccionConfirmada(datos.eleccionPropiaConfirmada);
         modelo.notificarCambio();
     }
 }

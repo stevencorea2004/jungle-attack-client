@@ -14,6 +14,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import control.ControladorJuego;
 import control.ControladorLobby;
@@ -23,6 +24,7 @@ import model.Punto;
 import model.Seleccion;
 import red.ConexionServidor;
 import red.DatosVerZona;
+import red.DatosInicio;
 import red.EstadoVisible;
 import red.Mensaje;
 import red.TipoMensaje;
@@ -109,7 +111,7 @@ class UiRenderingTest {
         FakeConexion conexion = new FakeConexion();
         Seleccion seleccion = new Seleccion();
         PantallaJuego pantalla = new PantallaJuego(modelo,
-                new ControladorJuego(conexion, modelo, seleccion), seleccion, () -> { });
+                new ControladorJuego(conexion, seleccion), seleccion, () -> { });
 
         ((javax.swing.JButton) findNamed(pantalla, "regionSiguiente")).doClick();
 
@@ -214,7 +216,7 @@ class UiRenderingTest {
         ModeloJuego modelo = new ModeloJuego();
         List<Boolean> destinos = new ArrayList<>();
         PantallaLobby lobby = new PantallaLobby(modelo,
-                new ControladorLobby(new FakeConexion(), modelo), destinos::add);
+                new ControladorLobby(new FakeConexion()), destinos::add);
         lobby.setSize(900, 600);
         layoutRecursivamente(lobby);
         ((javax.swing.JTextField) findNamed(lobby, "nickname")).setText("Ana");
@@ -233,7 +235,7 @@ class UiRenderingTest {
         ModeloJuego modelo = new ModeloJuego();
         List<Boolean> destinos = new ArrayList<>();
         PantallaLobby lobby = new PantallaLobby(modelo,
-                new ControladorLobby(new FakeConexion(), modelo), destinos::add);
+                new ControladorLobby(new FakeConexion()), destinos::add);
         lobby.setSize(900, 600);
         layoutRecursivamente(lobby);
         ((javax.swing.JTextField) findNamed(lobby, "nickname")).setText("Ana");
@@ -242,6 +244,59 @@ class UiRenderingTest {
         assertTrue(destinos.isEmpty());
         modelo.setCodigoPartida("A1B2");
         lobby.refrescar();
+
+        assertEquals(List.of(Boolean.TRUE), destinos);
+    }
+
+    @Test
+    void rejectedSpeciesChoiceDoesNotOpenGameScreen() {
+        ModeloJuego modelo = new ModeloJuego();
+        List<Boolean> destinos = new ArrayList<>();
+        PantallaSeleccion seleccion = new PantallaSeleccion(modelo,
+                new ControladorLobby(new FakeConexion()), () -> destinos.add(Boolean.TRUE));
+        seleccion.setSize(1000, 700);
+        layoutRecursivamente(seleccion);
+        JLabel ayuda = (JLabel) findNamed(seleccion, "ayudaSeleccionAnimal");
+        String textoAyuda = ayuda.getText();
+        Color colorAyuda = ayuda.getForeground();
+        ((javax.swing.JButton) findNamed(seleccion, "especie-JAGUAR")).doClick();
+        ((javax.swing.JButton) findNamed(seleccion, "entrarAlBosque")).doClick();
+
+        assertTrue(destinos.isEmpty());
+        modelo.setUltimoError("La especie ya fue elegida por el otro jugador");
+        seleccion.refrescar();
+
+        assertTrue(destinos.isEmpty());
+        assertEquals(null, modelo.getMiEspecie());
+        assertTrue(!modelo.isSeleccionConfirmada());
+        assertEquals(textoAyuda, ayuda.getText());
+        assertEquals(colorAyuda, ayuda.getForeground());
+        assertTrue(((javax.swing.JButton) findNamed(seleccion, "entrarAlBosque")).isEnabled());
+        assertTrue(((javax.swing.JButton) findNamed(seleccion, "especie-JAGUAR")).isEnabled());
+        JLabel estadoSeleccion = (JLabel) findNamed(seleccion, "estadoSeleccion");
+        assertEquals("Selecciona una especie para continuar", estadoSeleccion.getText());
+        assertEquals(TemaUI.CREMA, estadoSeleccion.getForeground());
+    }
+
+    @Test
+    void acceptedSpeciesChoiceOpensGameOnlyWhenServerStartsMatch() {
+        ModeloJuego modelo = new ModeloJuego();
+        List<Boolean> destinos = new ArrayList<>();
+        PantallaSeleccion seleccion = new PantallaSeleccion(modelo,
+                new ControladorLobby(new FakeConexion()), () -> destinos.add(Boolean.TRUE));
+        seleccion.setSize(1000, 700);
+        layoutRecursivamente(seleccion);
+        ((javax.swing.JButton) findNamed(seleccion, "especie-JAGUAR")).doClick();
+        ((javax.swing.JButton) findNamed(seleccion, "entrarAlBosque")).doClick();
+
+        modelo.setSeleccionConfirmada(true);
+        seleccion.refrescar();
+        assertTrue(destinos.isEmpty());
+
+        DatosInicio inicio = new DatosInicio();
+        inicio.mapa = new VistaMapa();
+        modelo.aplicarInicio(inicio);
+        seleccion.refrescar();
 
         assertEquals(List.of(Boolean.TRUE), destinos);
     }

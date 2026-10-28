@@ -9,6 +9,7 @@ red\DatosAtacar.class
 red\DespachadorMensajes.class
 red\ManejadorEstado.class
 control\ControladorLobby.class
+model\AnimalCliente$MuestraPosicion.class
 red\DatosPartidaCreada.class
 iu\ClientMain.class
 iu\SpriteZona.class

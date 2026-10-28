@@ -18,10 +18,14 @@ public class PantallaSeleccion extends Pantalla {
     private final Runnable salir;
     private Especie seleccionada;
     private JLabel estado;
+    private JLabel ayuda;
     private JPanel opciones;
     private JPanel filaSuperior;
     private JPanel filaInferior;
+    private JButton botonEmpezar;
     private final CacheSvg cache = CacheSvg.getInstancia();
+    private boolean solicitudPendiente;
+    private boolean juegoNotificado;
 
     public PantallaSeleccion(ModeloJuego modelo, ControladorLobby controlador, Runnable continuar) {
         this(modelo, controlador, continuar, () -> { });
@@ -43,10 +47,13 @@ public class PantallaSeleccion extends Pantalla {
         setBackground(TemaUI.VERDE_NOCHE);
         JLabel titulo = TemaUI.etiqueta("Elige tu animal", Font.BOLD, 32f, TemaUI.CREMA);
         JLabel texto = TemaUI.etiqueta("Cada especie solo puede pertenecer a un jugador", Font.PLAIN, 15f, TemaUI.CREMA);
-        JPanel         encabezado = new JPanel(new java.awt.GridLayout(2, 1, 0, 5));
+        estado = TemaUI.etiqueta("Selecciona una especie para continuar", Font.PLAIN, 14f, TemaUI.CREMA);
+        estado.setName("estadoSeleccion");
+        JPanel encabezado = new JPanel(new java.awt.GridLayout(3, 1, 0, 5));
         encabezado.setOpaque(false);
         encabezado.add(titulo);
         encabezado.add(texto);
+        encabezado.add(estado);
         add(encabezado, BorderLayout.NORTH);
 
         opciones = new JPanel(new java.awt.GridLayout(2, 1, 0, 16));
@@ -60,29 +67,39 @@ public class PantallaSeleccion extends Pantalla {
         opciones.add(filaSuperior);
         opciones.add(filaInferior);
         add(opciones, BorderLayout.CENTER);
-        estado = TemaUI.etiqueta("Selecciona una especie para continuar", Font.PLAIN, 14f, TemaUI.CREMA);
-        JButton empezar = TemaUI.boton("Entrar al bosque");
-        empezar.addActionListener(e -> {
-            if (seleccionada == null) {
-                estado.setText("Primero elige una especie");
+        ayuda = TemaUI.etiqueta("Elige una especie disponible y pulsa Entrar al bosque",
+                Font.PLAIN, 13f, TemaUI.CREMA);
+        ayuda.setName("ayudaSeleccionAnimal");
+        botonEmpezar = TemaUI.boton("Entrar al bosque");
+        botonEmpezar.setName("entrarAlBosque");
+        botonEmpezar.addActionListener(e -> {
+            if (solicitudPendiente || (modelo != null && modelo.isSeleccionConfirmada())) {
                 return;
             }
-            if (modelo != null) {
-                modelo.setMiEspecie(seleccionada);
+            if (seleccionada == null) {
+                DialogoError.mostrar(this, "Primero elige una especie.");
+                return;
             }
-            if (controlador != null) {
-                controlador.elegirEspecie(seleccionada);
+            if (controlador == null || modelo == null) {
+                DialogoError.mostrar(this, "No hay una conexion disponible con el servidor.");
+                return;
             }
-            continuar.run();
+            solicitudPendiente = true;
+            modelo.setMiEspecie(seleccionada);
+            modelo.limpiarUltimoError();
+            estado.setText("Enviando seleccion...");
+            estado.setForeground(TemaUI.CREMA);
+            botonEmpezar.setEnabled(false);
+            controlador.elegirEspecie(seleccionada);
         });
         JPanel pie = new JPanel(new BorderLayout(14, 0));
         pie.setOpaque(false);
         pie.setBorder(BorderFactory.createEmptyBorder(0, 25, 20, 25));
-        pie.add(estado, BorderLayout.CENTER);
+        pie.add(ayuda, BorderLayout.CENTER);
         JButton salir = TemaUI.boton("Salir de partida");
         salir.addActionListener(e -> this.salir.run());
         pie.add(salir, BorderLayout.WEST);
-        pie.add(empezar, BorderLayout.EAST);
+        pie.add(botonEmpezar, BorderLayout.EAST);
         add(pie, BorderLayout.SOUTH);
         cargarEspecies();
     }
@@ -90,9 +107,38 @@ public class PantallaSeleccion extends Pantalla {
     @Override
     public void refrescar() {
         cargarEspecies();
-        if (estado != null && modelo != null && modelo.getUltimoError() != null) {
-            estado.setText(modelo.getUltimoError());
-            estado.setForeground(new java.awt.Color(166, 55, 44));
+        if (modelo == null || estado == null) {
+            return;
+        }
+        if (modelo.getMapa() != null) {
+            if (!juegoNotificado && continuar != null) {
+                juegoNotificado = true;
+                continuar.run();
+            }
+            return;
+        }
+        juegoNotificado = false;
+        if (modelo.getUltimoError() != null && !modelo.getUltimoError().isBlank()) {
+            if (solicitudPendiente) {
+                solicitudPendiente = false;
+                seleccionada = null;
+                modelo.setMiEspecie(null);
+                modelo.setSeleccionConfirmada(false);
+                if (botonEmpezar != null) {
+                    botonEmpezar.setEnabled(true);
+                }
+                cargarEspecies();
+            }
+            estado.setText("Selecciona una especie para continuar");
+            estado.setForeground(TemaUI.CREMA);
+            return;
+        }
+        if (modelo.isSeleccionConfirmada()) {
+            solicitudPendiente = false;
+            estado.setText("Especie confirmada. Esperando al otro jugador...");
+            estado.setForeground(TemaUI.CREMA);
+        } else if (solicitudPendiente) {
+            estado.setText("Enviando seleccion...");
         }
     }
 
@@ -113,7 +159,8 @@ public class PantallaSeleccion extends Pantalla {
             opcion.setFont(opcion.getFont().deriveFont(Font.BOLD, 15f));
             opcion.setForeground(libre ? TemaUI.TEXTO : new java.awt.Color(130, 130, 130));
             opcion.setBackground(libre ? TemaUI.PANEL : new java.awt.Color(190, 190, 182));
-            opcion.setEnabled(libre);
+            opcion.setEnabled(libre && !solicitudPendiente
+                    && (modelo == null || !modelo.isSeleccionConfirmada()));
             opcion.setFocusPainted(false);
             opcion.setPreferredSize(new java.awt.Dimension(170, 160));
             opcion.setBorder(BorderFactory.createCompoundBorder(
@@ -132,6 +179,7 @@ public class PantallaSeleccion extends Pantalla {
             opcion.addActionListener(e -> {
                 seleccionada = especie;
                 estado.setText(especie.getNombre() + " seleccionado");
+                estado.setForeground(TemaUI.CREMA);
                 cargarEspecies();
             });
             if (indice < 3) {

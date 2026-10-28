@@ -29,6 +29,7 @@ public class ModeloJuego extends Observable {
     private int botsEliminados;
     private String ultimoError;
     private ResumenPartida resumen;
+    private boolean seleccionConfirmada;
 
     public void aplicarInicio(DatosInicio inicio) {
         if (inicio == null) {
@@ -41,6 +42,7 @@ public class ModeloJuego extends Observable {
         animales.clear();
         miEspecie = null;
         resumen = null;
+        seleccionConfirmada = false;
         danio = 0;
         tazasConsumidas = 0;
         botsEliminados = 0;
@@ -153,6 +155,7 @@ public class ModeloJuego extends Observable {
         botsEliminados = 0;
         ultimoError = null;
         resumen = null;
+        seleccionConfirmada = false;
         notifyObservers(this);
     }
 
@@ -191,6 +194,10 @@ public class ModeloJuego extends Observable {
     public String getUltimoError() { return ultimoError; }
     public void setUltimoError(String ultimoError) { this.ultimoError = ultimoError; notifyObservers(this); }
     public void limpiarUltimoError() { ultimoError = null; }
+    public boolean isSeleccionConfirmada() { return seleccionConfirmada; }
+    public void setSeleccionConfirmada(boolean seleccionConfirmada) {
+        this.seleccionConfirmada = seleccionConfirmada;
+    }
     public ResumenPartida getResumen() { return resumen; }
     public void notificarCambio() { notifyObservers(this); }
 }
