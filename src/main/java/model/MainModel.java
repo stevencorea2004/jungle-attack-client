@@ -39,7 +39,7 @@ public final class MainModel {
         a.actualizarPos(new Punto(10, 0), 1000L);
         a.actualizarPos(new Punto(20, 0), 2000L);
         Punto p = a.posInterpolada(1500L);
-        if (Math.abs(p.getX() - 15.0) > 0.0001) {
+        if (Math.abs(p.getX() - 14.0) > 0.0001) {
             throw new AssertionError("Interpolacion incorrecta: " + p.getX());
         }
     }

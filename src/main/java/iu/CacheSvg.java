@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
@@ -22,7 +22,7 @@ public final class CacheSvg {
         return INSTANCIA;
     }
 
-    public synchronized void precargar(Vector<String> rutas) {
+    public synchronized void precargar(List<String> rutas) {
         if (rutas == null) {
             return;
         }

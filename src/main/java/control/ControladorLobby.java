@@ -1,7 +1,6 @@
 package control;
 
 import model.Especie;
-import model.ModeloJuego;
 import red.ConexionServidor;
 import red.DatosCrearPartida;
 import red.DatosElegirAnimal;
@@ -10,12 +9,10 @@ import red.FabricaMensajes;
 import red.TipoMensaje;
 
 public class ControladorLobby {
-    private ConexionServidor conexion;
-    private ModeloJuego modelo;
+    private final ConexionServidor conexion;
 
-    public ControladorLobby(ConexionServidor conexion, ModeloJuego modelo) {
+    public ControladorLobby(ConexionServidor conexion) {
         this.conexion = conexion;
-        this.modelo = modelo;
     }
 
     public void crearPartida(String nickname) {

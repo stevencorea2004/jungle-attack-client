@@ -29,7 +29,6 @@ import java.awt.Graphics;
         private static final int MUNDO_ALTO = 720;
         private ModeloJuego modelo;
         private Seleccion seleccion;
-        private Vector<IDibujable> dibujables;
         private Timer refresco;
         private Rectangle seleccionVisual;
         private Integer animalBajoCursor;
@@ -38,7 +37,6 @@ import java.awt.Graphics;
         public PanelMapa(ModeloJuego modelo, Seleccion seleccion, control.ControladorJuego controlador) {
             this.modelo = modelo;
             this.seleccion = seleccion;
-            this.dibujables = new Vector<>();
             this.controladorMouse = new ControladorMouse(controlador, this);
             setOpaque(true);
             setBackground(new Color(24, 65, 44));

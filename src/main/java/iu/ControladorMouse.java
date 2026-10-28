@@ -5,12 +5,11 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import model.AnimalCliente;
-import model.Punto;
 import model.Seleccion;
 
 public class ControladorMouse extends MouseAdapter {
-    private ControladorJuego controlador;
-    private PanelMapa panel;
+    private final ControladorJuego controlador;
+    private final PanelMapa panel;
     private Point inicioArrastre;
 
     public ControladorMouse(ControladorJuego controlador, PanelMapa panel) {
@@ -71,8 +70,8 @@ public class ControladorMouse extends MouseAdapter {
         if (seleccion == null) {
             return;
         }
-        java.util.Vector<AnimalCliente> propias = panel.getModelo() == null
-                ? new java.util.Vector<>() : panel.getModelo().getMisAnimales();
+        java.util.List<AnimalCliente> propias = panel.getModelo() == null
+                ? java.util.List.of() : panel.getModelo().getMisAnimales();
         seleccion.seleccionarEnRectangulo(propias, panel.rectanguloMundo(inicio, fin));
     }
 
